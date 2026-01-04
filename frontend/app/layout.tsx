@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import BackgroundEffects from "./components/BackgroundEffects";
 
 export const metadata: Metadata = {
     title: "Linguine - AI Menu Sense & Recommendation",
@@ -19,9 +20,7 @@ export default function RootLayout({
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
             </head>
             <body>
-                <div className="grid-bg" />
-                <div className="glow-orb" style={{ top: '-100px', right: '-100px' }} />
-                <div className="glow-orb" style={{ bottom: '-100px', left: '-100px', background: 'radial-gradient(circle, var(--secondary-glow) 0%, transparent 70%)' }} />
+                <BackgroundEffects />
                 {children}
             </body>
         </html>

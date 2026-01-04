@@ -55,53 +55,97 @@ export default function Hero({ setStep }: HeroProps) {
             </div>
 
             <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '4rem', alignItems: 'center', width: '100%' }}>
-                <div className="hero-content" style={{ textAlign: 'left' , paddingLeft: "0" }}>
+                <div className="hero-content" style={{ textAlign: 'left', paddingLeft: "0" }}>
                     <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(99, 102, 241, 0.1)', padding: '0.5rem 1rem', borderRadius: '100px', color: 'var(--primary)', fontWeight: 600, fontSize: '0.85rem', marginBottom: '1.5rem', border: '1px solid rgba(99, 102, 241, 0.2)' }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="hero-badge"
                     >
-                        <Globe size={16} /> Breaking Language Barriers in Gastronomy
+                        <Sparkles size={16} />
+                        <span>AI-Powered Menu Analysis</span>
                     </motion.div>
 
-                    <h2 className="hero-title" style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)', lineHeight: 1.1, marginBottom: '2rem' }}>
-                        Analyze Your Food <span className="hero-title-br"><br /></span>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.8 }}
+                        className="hero-title"
+                        style={{
+                            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
+                            lineHeight: 1.1,
+                            fontWeight: 800,
+                            marginBottom: '1.5rem',
+                            letterSpacing: '-0.04em'
+                        }}
+                    >
+                        Analyze Your Menu <br className="hero-title-br" />
                         <span className="gradient-text">With AI Vision</span>
-                    </h2>
+                    </motion.h1>
 
-                    <p className="hero-subtitle" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', lineHeight: 1.6, opacity: 0.6, marginBottom: '3rem', maxWidth: '540px' }}>
-                        Linguine AI isn't just translation anymore. Scan your plate to instantly
-                        identify ingredients, calculate nutrition, and verify dietary safety
-                        in real-time.
-                    </p>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.8 }}
+                        className="hero-subtitle"
+                        style={{
+                            fontSize: '1.25rem',
+                            opacity: 0.7,
+                            marginBottom: '3rem',
+                            maxWidth: '600px',
+                            lineHeight: 1.6
+                        }}
+                    >
+                        Linguine AI isn't just translation anymore. Scan your
+                        plate to instantly identify ingredients, calculate
+                        nutrition, and verify dietary safety in real-time.
+                    </motion.p>
 
-                    <div className="hero-buttons">
-                        <button className="btn-primary hero-btn" onClick={() => setStep(1)}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, duration: 0.8 }}
+                        className="hero-buttons"
+                    >
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="btn-primary hero-btn"
+                            onClick={() => setStep(1)}
+                        >
                             Start Analyzing <ArrowRight size={20} />
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             className="glass-card hero-btn hero-btn-secondary"
                             onClick={() => document.getElementById('capabilities')?.scrollIntoView({ behavior: 'smooth' })}
                         >
                             Watch Demo <Sparkles size={18} />
-                        </button>
-                    </div>
+                        </motion.button>
+                    </motion.div>
 
-                    <div className="hero-stats" style={{ marginTop: '3rem', display: 'flex', gap: 'clamp(1.5rem, 4vw, 3rem)' }}>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6, duration: 1 }}
+                        className="hero-stats"
+                    >
                         <div>
-                            <h4 style={{ fontSize: '1.5rem' }}>99%</h4>
-                            <p style={{ opacity: 0.5, fontSize: '0.8rem' }}>Accuracy</p>
+                            <h4>99%</h4>
+                            <p>Accuracy</p>
                         </div>
+                        <div className="hero-stat-divider"></div>
                         <div>
-                            <h4 style={{ fontSize: '1.5rem' }}>150+</h4>
-                            <p style={{ opacity: 0.5, fontSize: '0.8rem' }}>Languages</p>
+                            <h4>150+</h4>
+                            <p>Languages</p>
                         </div>
+                        <div className="hero-stat-divider"></div>
                         <div>
-                            <h4 style={{ fontSize: '1.5rem' }}>10k+</h4>
-                            <p style={{ opacity: 0.5, fontSize: '0.8rem' }}>Foodies</p>
+                            <h4>10k+</h4>
+                            <p>Foodies</p>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 <div className="hero-animation ">

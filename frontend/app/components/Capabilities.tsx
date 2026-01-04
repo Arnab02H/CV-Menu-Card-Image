@@ -42,25 +42,29 @@ export default function Capabilities() {
                     </motion.h2>
                 </div>
 
-                <div className="capabilities-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: '3rem', alignItems: 'center' }}>
+                <div className="capabilities-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.3fr)', gap: '3rem', alignItems: 'center' }}>
                     {/* Left Content: Food Database Mockup */}
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
+                        whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 1, ease: "easeOut" }}
                         className="capabilities-mockup"
-                        style={{ display: 'flex', justifyContent: 'center' }}
+                        style={{ display: 'flex', justifyContent: 'center', perspective: '1000px' }}
                     >
-                        <div style={{
-                            width: '260px',
-                            height: '480px',
-                            background: '#000',
-                            borderRadius: '40px',
-                            border: '2px solid #222',
-                            boxShadow: '0 30px 60px rgba(0,0,0,0.3), inset 0 0 0 7px #111',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}>
+                        <motion.div
+                            whileHover={{ rotateY: 10, rotateX: 5, scale: 1.02 }}
+                            style={{
+                                width: '260px',
+                                height: '480px',
+                                background: '#000',
+                                borderRadius: '40px',
+                                border: '2px solid #222',
+                                boxShadow: '0 30px 60px rgba(0,0,0,0.3), inset 0 0 0 7px #111',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}
+                        >
                             <div style={{ position: 'absolute', inset: '10px', borderRadius: '40px', overflow: 'hidden', background: '#fff' }}>
                                 <div style={{ padding: '3rem 1.5rem 1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid #f1f5f9' }}>
                                     <div style={{ background: '#f8fafc', padding: '0.5rem', borderRadius: '50%', color: '#64748b' }}>
@@ -91,34 +95,34 @@ export default function Capabilities() {
                                         { name: 'Avocado · Calavo', cal: '130 cal · serving', icon: '🥑' },
                                         { name: 'Egg', cal: '74 cal · large', icon: '🥚' }
                                     ].map((item, i) => (
-                                        <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: '#f8fafc', borderRadius: '18px', marginBottom: '0.8rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
+                                        <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.8rem', background: '#f8fafc', borderRadius: '18px', marginBottom: '0.6rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                                                <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
                                                 <div>
-                                                    <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>{item.name}</p>
-                                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{item.cal}</p>
+                                                    <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>{item.name}</p>
+                                                    <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>{item.cal}</p>
                                                 </div>
                                             </div>
-                                            <div style={{ color: '#0f172a' }}><Plus size={16} /></div>
+                                            <div style={{ color: '#0f172a' }}><Plus size={14} /></div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                             <div style={{ position: 'absolute', top: '15px', left: '50%', transform: 'translateX(-50%)', width: '90px', height: '22px', background: 'black', borderRadius: '11px', zIndex: 100 }}></div>
-                        </div>
+                        </motion.div>
                     </motion.div>
 
                     {/* Right Content: Feature Cards */}
-                    <div className="capabilities-content" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        {features.map((card) => (
+                    <div className="capabilities-content" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        {features.map((card, index) => (
                             <motion.div
                                 key={card.id}
-                                initial={{ opacity: 0, x: 50 }}
+                                initial={{ opacity: 0, x: 30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                whileHover={{ scale: 1.02 }}
+                                whileHover={{ scale: 1.02, x: 5 }}
                                 whileTap={{ scale: 0.98 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: card.id * 0.1 }}
+                                transition={{ delay: index * 0.15, duration: 0.5 }}
                                 onClick={() => setActiveCapability(card.id)}
                                 className={`capability-card ${activeCapability === card.id ? 'active' : ''}`}
                                 style={{
@@ -126,24 +130,31 @@ export default function Capabilities() {
                                     borderRadius: '16px',
                                     background: activeCapability === card.id ? 'var(--card-bg)' : 'transparent',
                                     border: activeCapability === card.id ? '2px solid var(--primary)' : '1px solid var(--glass-border)',
-                                    transition: 'all 0.3s ease',
+                                    transition: 'border 0.3s ease, background 0.3s ease',
                                     cursor: 'pointer',
-                                    position: 'relative'
+                                    position: 'relative',
+                                    overflow: 'hidden'
                                 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
+                                {activeCapability === card.id && (
+                                    <motion.div
+                                        layoutId="active-bg"
+                                        style={{ position: 'absolute', inset: 0, background: 'var(--primary-glow)', zIndex: 0 }}
+                                    />
+                                )}
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.2rem', position: 'relative', zIndex: 1 }}>
                                     <div style={{
                                         padding: '0.6rem',
                                         borderRadius: '10px',
-                                        background: activeCapability === card.id ? 'var(--primary-glow)' : 'var(--glass-bg)',
-                                        color: activeCapability === card.id ? 'var(--primary)' : 'var(--foreground)',
+                                        background: activeCapability === card.id ? 'var(--primary)' : 'var(--glass-bg)',
+                                        color: activeCapability === card.id ? 'white' : 'var(--foreground)',
                                         opacity: activeCapability === card.id ? 1 : 0.5
                                     }}>
                                         {card.icon}
                                     </div>
                                     <div>
-                                        <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.4rem', color: 'var(--foreground)' }}>{card.title}</h4>
-                                        <p style={{ fontSize: '0.85rem', lineHeight: 1.5, opacity: 0.5, color: 'var(--foreground)' }}>{card.desc}</p>
+                                        <h4 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.3rem', color: 'var(--foreground)' }}>{card.title}</h4>
+                                        <p style={{ fontSize: '0.8rem', lineHeight: 1.5, opacity: activeCapability === card.id ? 0.8 : 0.5, color: 'var(--foreground)' }}>{card.desc}</p>
                                     </div>
                                 </div>
                             </motion.div>
