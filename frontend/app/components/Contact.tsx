@@ -26,7 +26,7 @@ export default function Contact() {
                     Accept: "application/json",
                 },
                 body: JSON.stringify({
-                    access_key: "YOUR_ACCESS_KEY_HERE", // I'll add instructions below for the user to get this
+                    access_key: "ea0695fe-5fd3-42a0-a450-45d0bc35eac7",
                     name: formData.name,
                     email: formData.email,
                     message: formData.message,
@@ -36,6 +36,7 @@ export default function Contact() {
             });
 
             const result = await response.json();
+            console.log("Web3Forms Response:", result);
 
             if (result.success) {
                 setStatus("success");
@@ -43,11 +44,15 @@ export default function Contact() {
                 // Auto-reset after 7 seconds
                 setTimeout(() => setStatus("idle"), 7000);
             } else {
-                console.error("Submission failed:", result);
+                console.error("Web3Forms Error:", result.message);
                 setStatus("error");
+                // If the error message indicates unverified email, we can help the user
+                if (result.message?.includes("verify")) {
+                    alert("Important: Please check your inbox (genaiedu2025@gmail.com) and click the activation link from Web3Forms to enable this form.");
+                }
             }
         } catch (error) {
-            console.error("Network error:", error);
+            console.error("Submission Network Error:", error);
             setStatus("error");
         }
     };
