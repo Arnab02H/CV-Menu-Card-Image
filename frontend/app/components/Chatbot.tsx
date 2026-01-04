@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, User, Bot, Sparkles } from "lucide-react";
+import { MessageCircle, X, Send, User, Bot, Sparkles, Search } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface Message {
@@ -153,8 +153,8 @@ export default function Chatbot() {
                         {/* Header */}
                         <div style={{ padding: '1.2rem', background: 'var(--primary)', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                <div style={{ background: 'rgba(255,255,255,0.2)', padding: '0.5rem', borderRadius: '10px' }}>
-                                    <Sparkles size={18} />
+                                <div style={{ width: '40px', height: '40px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                    <img src="/bot-mascot-transparent.png" alt="bot" style={{ width: '120%', height: '120%', objectFit: 'contain', mixBlendMode: 'screen', borderRadius: '50%' }} />
                                 </div>
                                 <div>
                                     <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>Linguine Support</h4>
@@ -193,16 +193,21 @@ export default function Chatbot() {
                                     }}
                                 >
                                     <div style={{
-                                        width: '30px',
-                                        height: '30px',
+                                        width: '32px',
+                                        height: '32px',
                                         borderRadius: '50%',
-                                        background: msg.role === 'user' ? 'var(--secondary)' : 'var(--primary)',
+                                        background: msg.role === 'user' ? 'var(--secondary)' : 'transparent',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        flexShrink: 0
+                                        flexShrink: 0,
+                                        overflow: 'hidden'
                                     }}>
-                                        {msg.role === 'user' ? <User size={14} color="white" /> : <Bot size={14} color="white" />}
+                                        {msg.role === 'user' ? (
+                                            <User size={16} color="white" />
+                                        ) : (
+                                            <img src="/bot-mascot-transparent.png" alt="bot" style={{ width: '140%', height: '140%', objectFit: 'contain', mixBlendMode: 'screen', borderRadius: '50%' }} />
+                                        )}
                                     </div>
                                     <div style={{
                                         padding: '0.8rem 1rem',
@@ -295,7 +300,6 @@ export default function Chatbot() {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => {
                     if (isOpen) {
-                        // Reset messages when closing
                         setMessages([
                             { role: 'bot', content: "Hi! I'm Linguine Bot. How can I help you explore local cuisines today?" }
                         ]);
@@ -306,10 +310,9 @@ export default function Chatbot() {
                     width: '60px',
                     height: '60px',
                     borderRadius: '50%',
-                    background: 'var(--primary)',
+                    background: 'transparent',
                     color: 'white',
                     border: 'none',
-                    boxShadow: '0 10px 30px var(--primary-glow)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -317,7 +320,9 @@ export default function Chatbot() {
                     position: 'relative'
                 }}
             >
-                {isOpen ? <X size={28} /> : <MessageCircle size={28} />}
+                {isOpen ? <X size={28} /> : (
+                    <img src="/bot-mascot-transparent.png" alt="bot" style={{ width: '60px', height: '60px', objectFit: 'contain', mixBlendMode: 'screen', borderRadius: '50%' }} />
+                )}
                 {!isOpen && (
                     <motion.div
                         initial={{ scale: 0 }}
