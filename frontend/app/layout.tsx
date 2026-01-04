@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import BackgroundEffects from "./components/BackgroundEffects";
+import Chatbot from "./components/Chatbot";
 
 export const metadata: Metadata = {
     title: "Linguine - AI Menu Sense & Recommendation",
@@ -22,6 +23,7 @@ export default function RootLayout({
             <body>
                 <BackgroundEffects />
                 {children}
+                <Chatbot />
             </body>
         </html>
     );

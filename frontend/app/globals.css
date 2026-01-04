@@ -589,6 +589,19 @@ a {
   }
 }
 
+@media (max-width: 480px) {
+  .chatbot-container {
+    right: 1.5rem !important;
+    bottom: 1.5rem !important;
+  }
+
+  .chatbot-window {
+    width: 90vw !important;
+    max-width: 350px !important;
+    height: 65vh !important;
+  }
+}
+
 .bg-animations {
   z-index: -1;
 }
