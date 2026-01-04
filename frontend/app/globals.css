@@ -533,25 +533,59 @@ a {
   }
 
   #capabilities {
-    padding: 4rem 1rem !important;
+    padding: 3rem 1rem 1rem 1rem !important;
+  }
+
+  .capabilities-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
   }
 
   .capabilities-mockup {
-    transform: scale(0.55);
-    margin: -10rem 0 !important;
+    transform: scale(0.65);
+    transform-origin: center top;
+    margin-top: 1rem !important;
+    margin-bottom: 0 !important;
+    /* Reset negative margin to be safe */
     width: 100% !important;
+    order: 2;
   }
 
-  .capability-card {
-    padding: 1rem !important;
+  .capabilities-content {
+    order: 1;
+    width: 100%;
+    margin-top: 1rem;
   }
 
-  .capability-card h4 {
+  /* Mission Section Mobile Fix */
+  #our-mission {
+    padding: 6rem 1.5rem 3rem 1.5rem !important;
+    /* Increased top padding significantly */
+    margin-top: 0 !important;
+  }
+
+  #our-mission h2 {
+    font-size: 2.2rem !important;
+    margin-top: 1rem !important;
+  }
+
+  #our-mission p {
     font-size: 0.95rem !important;
   }
 
+  .capability-card {
+    padding: 0.8rem 1rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .capability-card h4 {
+    font-size: 0.9rem !important;
+  }
+
   .capability-card p {
-    font-size: 0.75rem !important;
+    font-size: 0.7rem !important;
+    line-height: 1.4 !important;
   }
 }
 

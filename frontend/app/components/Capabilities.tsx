@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Search, Plus, Camera, Database, TrendingUp } from "lucide-react";
 import { useState } from "react";
 
@@ -10,14 +10,14 @@ export default function Capabilities() {
     const features = [
         {
             id: 0,
-            title: "Track Your Food With Just a Picture",
-            desc: "Snap a photo with Linguine AI, and our AI then analyzes and breaks down your meal to determine calories and safety.",
+            title: "Menu Language Confusing? Just upload one picture",
+            desc: "Snap a photo with Linguine AI, and our AI then analyzes and translate it instantly into your own language.",
             icon: <Camera size={20} />
         },
         {
             id: 1,
-            title: "Search Our Database of over 1 million foods",
-            desc: "Quickly find and log foods from our library. Search by name, brand, or scan barcodes for instant info.",
+            title: "Customize Your Food Preferences",
+            desc: "Choose cuisine, dietary constraints, and spice level for smarter menu analysis.",
             icon: <Database size={20} />
         },
         {
@@ -50,7 +50,7 @@ export default function Capabilities() {
                         viewport={{ once: true }}
                         transition={{ duration: 1, ease: "easeOut" }}
                         className="capabilities-mockup"
-                        style={{ display: 'flex', justifyContent: 'center', perspective: '1000px' }}
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', perspective: '1000px' }}
                     >
                         <motion.div
                             whileHover={{ rotateY: 10, rotateX: 5, scale: 1.02 }}
@@ -66,50 +66,122 @@ export default function Capabilities() {
                             }}
                         >
                             <div style={{ position: 'absolute', inset: '10px', borderRadius: '40px', overflow: 'hidden', background: '#fff' }}>
-                                <div style={{ padding: '3rem 1.5rem 1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid #f1f5f9' }}>
-                                    <div style={{ background: '#f8fafc', padding: '0.5rem', borderRadius: '50%', color: '#64748b' }}>
-                                        <ChevronLeft size={20} />
-                                    </div>
-                                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>Food Database</h3>
-                                </div>
-                                <div style={{ padding: '1.5rem' }}>
-                                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '0.8rem', border: '1px solid #f1f5f9' }}>
-                                        <Search size={18} color="#94a3b8" />
-                                        <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Describe what you ate</span>
-                                    </div>
-                                </div>
-                                <div style={{ display: 'flex', gap: '1.2rem', padding: '0 1.5rem', marginBottom: '1.5rem', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-                                    {['All', 'My meals', 'My foods', 'Saved'].map((tab, i) => (
-                                        <span key={tab} style={{ fontSize: '0.85rem', fontWeight: i === 0 ? 800 : 500, color: i === 0 ? '#0f172a' : '#94a3b8', borderBottom: i === 0 ? '2px solid #0f172a' : 'none', paddingBottom: '0.4rem' }}>{tab}</span>
-                                    ))}
-                                </div>
-                                <div style={{ padding: '0 1.5rem 1.5rem 1.5rem' }}>
-                                    <button style={{ width: '100%', padding: '0.9rem', borderRadius: '100px', border: '1.5px solid #0f172a', background: 'transparent', color: '#0f172a', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-                                        <Plus size={18} /> Log empty food
-                                    </button>
-                                </div>
-                                <div style={{ padding: '0 1.5rem' }}>
-                                    <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a', marginBottom: '1rem' }}>Suggestions</p>
-                                    {[
-                                        { name: 'Peanut Butter', cal: '94 cal · tbsp', icon: '🥜' },
-                                        { name: 'Avocado · Calavo', cal: '130 cal · serving', icon: '🥑' },
-                                        { name: 'Egg', cal: '74 cal · large', icon: '🥚' }
-                                    ].map((item, i) => (
-                                        <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.8rem', background: '#f8fafc', borderRadius: '18px', marginBottom: '0.6rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                                <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
-                                                <div>
-                                                    <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>{item.name}</p>
-                                                    <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>{item.cal}</p>
+                                <AnimatePresence mode="wait">
+                                    {activeCapability === 0 && (
+                                        <motion.div
+                                            key="scan"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            style={{ height: '100%', position: 'relative', background: '#000' }}
+                                        >
+                                            <div style={{ position: 'absolute', inset: 0, opacity: 0.6, background: 'url("https://images.unsplash.com/photo-1546241072-48010ad2862c?auto=format&fit=crop&q=80") center/cover' }}></div>
+                                            <motion.div
+                                                animate={{ top: ['10%', '90%', '10%'] }}
+                                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                                style={{ position: 'absolute', left: 0, right: 0, height: '2px', background: 'var(--primary)', boxShadow: '0 0 15px var(--primary)', zIndex: 10 }}
+                                            />
+                                            <div style={{ position: 'absolute', bottom: '2rem', left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                                                <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '4px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'white' }}></div>
                                                 </div>
+                                                <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: 700, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>SCANNING MENU...</span>
                                             </div>
-                                            <div style={{ color: '#0f172a' }}><Plus size={14} /></div>
-                                        </div>
-                                    ))}
-                                </div>
+                                        </motion.div>
+                                    )}
+
+                                    {activeCapability === 1 && (
+                                        <motion.div
+                                            key="pref"
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            style={{ height: '100%', padding: '3.5rem 1.5rem', background: '#fff' }}
+                                        >
+                                            <h4 style={{ color: '#000', fontSize: '1.2rem', fontWeight: 800, marginBottom: '1.5rem' }}>Preferences</h4>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                                                {['Cuisine', 'Spice Level', 'Dietary'].map((label, idx) => (
+                                                    <div key={label}>
+                                                        <p style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{label}</p>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            {[1, 2, 3].map(i => (
+                                                                <div key={i} style={{ padding: '0.4rem 0.8rem', borderRadius: '100px', background: i === 1 ? 'var(--primary)' : '#f1f5f9', color: i === 1 ? '#fff' : '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Option {i}</div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div style={{ marginTop: '2.5rem', width: '100%', padding: '0.8rem', borderRadius: '12px', background: 'var(--primary)', color: '#fff', textAlign: 'center', fontWeight: 700, fontSize: '0.9rem' }}>
+                                                Save Preferences
+                                            </div>
+                                        </motion.div>
+                                    )}
+
+                                    {activeCapability === 2 && (
+                                        <motion.div
+                                            key="results"
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -20 }}
+                                            style={{ height: '100%', padding: '3.5rem 1.2rem', background: '#f8fafc' }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
+                                                <h4 style={{ color: '#000', fontSize: '1.1rem', fontWeight: 800 }}>Analysis</h4>
+                                                <TrendingUp size={18} color="var(--primary)" />
+                                            </div>
+                                            {[
+                                                { name: 'Spicy Ramen', score: '9.5', color: '#10b981' },
+                                                { name: 'Chicken Tacos', score: '8.2', color: '#10b981' },
+                                                { name: 'Garden Salad', score: '9.8', color: '#10b981' }
+                                            ].map((item, i) => (
+                                                <motion.div
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: i * 0.1 }}
+                                                    key={i}
+                                                    style={{ padding: '0.9rem', background: '#fff', borderRadius: '14px', marginBottom: '0.8rem', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                                >
+                                                    <div>
+                                                        <p style={{ color: '#000', fontSize: '0.85rem', fontWeight: 700 }}>{item.name}</p>
+                                                        <p style={{ color: '#64748b', fontSize: '0.65rem' }}>Verified Safe</p>
+                                                    </div>
+                                                    <div style={{ color: item.color, fontWeight: 800, fontSize: '0.9rem' }}>{item.score}</div>
+                                                </motion.div>
+                                            ))}
+                                            <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '14px', background: 'var(--primary-glow)', border: '1px solid var(--primary)', color: 'var(--primary)', fontSize: '0.75rem', lineHeight: 1.4, fontWeight: 600 }}>
+                                                AI Tip: This menu has 3 high-protein options matching your profile.
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                             <div style={{ position: 'absolute', top: '15px', left: '50%', transform: 'translateX(-50%)', width: '90px', height: '22px', background: 'black', borderRadius: '11px', zIndex: 100 }}></div>
                         </motion.div>
+
+                        {/* Pagination Dots Below the Phone */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '12px',
+                            marginTop: '1.5rem'
+                        }}>
+                            {[0, 1, 2].map(idx => (
+                                <motion.div
+                                    key={idx}
+                                    onClick={() => setActiveCapability(idx)}
+                                    whileHover={{ scale: 1.2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    style={{
+                                        width: '12px',
+                                        height: '12px',
+                                        borderRadius: '50%',
+                                        background: activeCapability === idx ? '#4f46e5' : 'rgba(255, 255, 255, 0.2)',
+                                        cursor: 'pointer',
+                                        transition: 'background 0.3s ease',
+                                        boxShadow: activeCapability === idx ? '0 0 10px rgba(79, 70, 229, 0.4)' : 'none'
+                                    }}
+                                />
+                            ))}
+                        </div>
                     </motion.div>
 
                     {/* Right Content: Feature Cards */}
