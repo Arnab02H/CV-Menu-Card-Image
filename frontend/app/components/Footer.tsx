@@ -1,55 +1,76 @@
 "use client";
 
-import { ChefHat, Twitter, Instagram, Github, Mail } from "lucide-react";
+import { ChefHat, Twitter, Instagram, Github, Mail, Linkedin, Youtube } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Footer() {
     return (
-        <footer style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--glass-border)', padding: '5rem 2rem 2rem 2rem' }}>
-            <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '4rem' }}>
-                <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+        <footer style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--glass-border)', padding: '3rem 2rem' }}>
+            <div style={{
+                maxWidth: '1200px',
+                margin: '0 auto',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '2rem'
+            }}>
+                {/* Left: Logo & Description */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '200px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                         <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--secondary))', padding: '0.4rem', borderRadius: '8px' }}>
                             <ChefHat size={18} color="white" />
                         </div>
-                        <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>LINGUINE AI</span>
+                        <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.5px' }}>LINGUINE <span className="gradient-text">AI</span></span>
                     </div>
-                    <p style={{ opacity: 0.5, fontSize: '0.9rem', lineHeight: 1.6 }}>
-                        Bridging cultures through culinary intelligence. Explore menus without limits.
+                    <p style={{ opacity: 0.5, fontSize: '0.8rem', maxWidth: '250px' }}>
+                        Bridging cultures through culinary intelligence.
                     </p>
                 </div>
 
-                <div>
-                    <h4 style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>Product</h4>
-                    <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', opacity: 0.6, fontSize: '0.9rem' }}>
-                        <li>AI Translation</li>
-                        <li>Ingredient Safety</li>
-                        <li>Mobile App</li>
-                        <li>API Access</li>
-                    </ul>
+                {/* Center: Links with Pipes */}
+                <div style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '0.8rem',
+                    fontSize: '0.85rem',
+                    color: 'var(--foreground)',
+                    opacity: 0.7
+                }}>
+                    <a href="#about">About</a>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <a href="#contact">Contact us</a>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <a href="#pricing">Pricing</a>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <a href="#terms">Terms and Conditions</a>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <a href="#privacy">Privacy Policy</a>
                 </div>
 
-                <div>
-                    <h4 style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>Company</h4>
-                    <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', opacity: 0.6, fontSize: '0.9rem' }}>
-                        <li>Our Mission</li>
-                        <li>About Us</li>
-                        <li>Careers</li>
-                        <li>Contact</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>Connect</h4>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <Twitter size={20} style={{ opacity: 0.6, cursor: 'pointer' }} />
-                        <Instagram size={20} style={{ opacity: 0.6, cursor: 'pointer' }} />
-                        <Github size={20} style={{ opacity: 0.6, cursor: 'pointer' }} />
-                        <Mail size={20} style={{ opacity: 0.6, cursor: 'pointer' }} />
-                    </div>
+                {/* Right: Social Icons */}
+                <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
+                    <motion.a whileHover={{ y: -2 }} href="#" style={{ color: '#E4405F' }}><Instagram size={20} /></motion.a>
+                    <motion.a whileHover={{ y: -2 }} href="#" style={{ color: 'var(--foreground)' }}><Twitter size={20} /></motion.a>
+                    <motion.a whileHover={{ y: -2 }} href="#" style={{ color: '#0077b5' }}><Linkedin size={20} /></motion.a>
+                    <motion.a whileHover={{ y: -2 }} href="#" style={{ color: '#FF0000' }}><Youtube size={20} /></motion.a>
                 </div>
             </div>
-            <div style={{ maxWidth: '1200px', margin: '4rem auto 0 auto', paddingTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', opacity: 0.4, fontSize: '0.8rem' }}>
-                © 2026 Linguine AI. All rights reserved. Made with ❤️ for foodies worldwide.
+
+            {/* Bottom: Copyright */}
+            <div style={{
+                maxWidth: '1200px',
+                margin: '2.5rem auto 0 auto',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid var(--glass-border)',
+                textAlign: 'center',
+                opacity: 0.4,
+                fontSize: '0.8rem',
+                fontStyle: 'italic'
+            }}>
+                Copyright © 2026 Linguine AI | All rights reserved
             </div>
         </footer>
     );
