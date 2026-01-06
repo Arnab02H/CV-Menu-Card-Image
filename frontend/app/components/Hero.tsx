@@ -61,9 +61,10 @@ export default function Hero({ setStep }: HeroProps) {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
                         className="hero-badge"
+                        style={{ marginBottom: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', borderRadius: '100px', background: 'var(--primary-glow)', border: '1px solid var(--primary)', color: 'var(--primary)', fontWeight: 600, fontSize: '0.9rem' }}
                     >
-                        <Sparkles size={16} />
-                        <span>AI-Powered Menu Analysis</span>
+                        <Sparkles size={14} />
+                        <span>Confusing menus? Unfamiliar dishes? No images?</span>
                     </motion.div>
 
                     <motion.h1
