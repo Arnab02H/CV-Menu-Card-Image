@@ -30,6 +30,7 @@ frontend/log.txt
 .env*.local
 .env
 frontend/.env
+backend/.env
 frontend/.env*.local
 
 # vercel

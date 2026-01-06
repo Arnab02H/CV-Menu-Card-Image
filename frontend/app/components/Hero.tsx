@@ -97,9 +97,7 @@ export default function Hero({ setStep }: HeroProps) {
                             lineHeight: 1.6
                         }}
                     >
-                        Linguine AI isn't just translation anymore. Scan your
-                        plate to instantly identify ingredients, calculate
-                        nutrition, and verify dietary safety in real-time.
+                       Linguine AI visually understands restaurant menus, translates them, and recommends what you should eat—based on your preferences and dietary needs.
                     </motion.p>
 
                     <motion.div
