@@ -9,18 +9,51 @@ import Mission from "./components/Mission";
 import Founder from "./components/Founder";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import UploadStep from "./components/UploadStep";
-import PreferencesStep from "./components/PreferencesStep";
+import AnalysisSection from "./components/AnalysisSection";
 import ResultsStep from "./components/ResultsStep";
 
 export default function Home() {
-    const [step, setStep] = useState(0); // 0 = Landing, 1 = Upload, 2 = Preferences, 3 = Results
+    const [step, setStepState] = useState(0); // 0 = Landing, 1 = Analysis, 2 = Results
+
+    // Custom setStep to sync with URL hash
+    const setStep = (newStep: number | ((prev: number) => number)) => {
+        setStepState(prev => {
+            const val = typeof newStep === 'function' ? newStep(prev) : newStep;
+            if (val === 1) {
+                window.location.hash = 'analyze-menu';
+            } else if (val === 0) {
+                window.location.hash = 'home';
+            }
+            return val;
+        });
+    };
+
+    useEffect(() => {
+        // Handle initial hash and back/forward navigation
+        const handleHashChange = () => {
+            const hash = window.location.hash;
+            if (hash === '#analyze-menu') {
+                setStepState(1);
+            } else {
+                setStepState(0);
+            }
+        };
+
+        // Check on mount
+        handleHashChange();
+
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [files, setFiles] = useState<File[]>([]);
     const [cuisine, setCuisine] = useState("");
     const [spiceLevel, setSpiceLevel] = useState("Medium");
     const [dietaryConstraints, setDietaryConstraints] = useState<string[]>([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [budgetSensitivity, setBudgetSensitivity] = useState("Normal");
     const [analysisResults, setAnalysisResults] = useState<any[]>([]);
 
     useEffect(() => {
@@ -37,7 +70,6 @@ export default function Home() {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setFiles(Array.from(e.target.files));
-            nextStep();
         }
     };
 
@@ -49,31 +81,35 @@ export default function Home() {
 
     const runAnalysis = async () => {
         setIsAnalyzing(true);
+        setError(null);
         const formData = new FormData();
         files.forEach(file => formData.append("images", file));
         formData.append("cuisine", cuisine);
         formData.append("spice_level", spiceLevel);
         formData.append("dietary_constraints", JSON.stringify(dietaryConstraints));
+        formData.append("budget_sensitivity", budgetSensitivity);
 
         try {
             const response = await fetch("http://localhost:8000/analyze-menu", {
                 method: "POST",
                 body: formData,
             });
+
             const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail || "Analysis failed");
+            }
 
             if (data && Array.isArray(data.dishes)) {
                 setAnalysisResults(data.dishes);
-                nextStep();
             } else {
-                console.error("Invalid response format:", data);
-                setAnalysisResults([]);
-                nextStep();
+                setError("No dishes found or invalid format.");
             }
-        } catch (error) {
-            console.error("Analysis failed:", error);
+        } catch (err: any) {
+            console.error("Analysis failed:", err);
+            setError(err.message || "Something went wrong.");
             setAnalysisResults([]);
-            nextStep();
         } finally {
             setIsAnalyzing(false);
         }
@@ -110,15 +146,9 @@ export default function Home() {
                 )}
 
                 {step === 1 && (
-                    <UploadStep
+                    <AnalysisSection
                         files={files}
                         handleFileChange={handleFileChange}
-                        setStep={setStep}
-                    />
-                )}
-
-                {step === 2 && (
-                    <PreferencesStep
                         cuisine={cuisine}
                         setCuisine={setCuisine}
                         spiceLevel={spiceLevel}
@@ -127,11 +157,15 @@ export default function Home() {
                         toggleConstraint={toggleConstraint}
                         runAnalysis={runAnalysis}
                         isAnalyzing={isAnalyzing}
-                        prevStep={prevStep}
+                        setStep={setStep}
+                        analysisResults={analysisResults}
+                        budgetSensitivity={budgetSensitivity}
+                        setBudgetSensitivity={setBudgetSensitivity}
+                        error={error}
                     />
                 )}
 
-                {step === 3 && (
+                {step === 2 && (
                     <ResultsStep
                         analysisResults={analysisResults}
                         isAnalyzing={isAnalyzing}

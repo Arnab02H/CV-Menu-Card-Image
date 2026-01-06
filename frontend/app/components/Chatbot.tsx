@@ -89,7 +89,28 @@ export default function Chatbot() {
         { role: 'bot', content: "Hi! I'm Linguine Bot. How can I help you explore local cuisines today?" }
     ]);
     const [input, setInput] = useState("");
+    const [isVisible, setIsVisible] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const checkVisibility = () => {
+            const isAnalyzePage = window.location.hash === '#analyze-menu';
+            const isMobile = window.innerWidth <= 768;
+            if (isAnalyzePage && isMobile) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+        };
+
+        checkVisibility();
+        window.addEventListener('hashchange', checkVisibility);
+        window.addEventListener('resize', checkVisibility);
+        return () => {
+            window.removeEventListener('hashchange', checkVisibility);
+            window.removeEventListener('resize', checkVisibility);
+        };
+    }, []);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -120,6 +141,8 @@ export default function Chatbot() {
             setMessages(prev => [...prev, { role: 'bot', content: botAnswer }]);
         }, 600);
     };
+
+    if (!isVisible) return null;
 
     return (
         <div className="chatbot-container" style={{

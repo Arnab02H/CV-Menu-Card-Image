@@ -3,9 +3,10 @@ import traceback
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
-from models import MenuAnalysisResponse
+from models import MenuAnalysisResponse, Dish
 from dotenv import load_dotenv
-from services.ocr_service import analyze_image
+from extract_text import extract_menu
+import json
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -35,23 +36,48 @@ async def analyze_menu(
     dietary_constraints: Optional[str] = Form("[]"),
     budget_sensitivity: Optional[str] = Form(None)
 ):
-    logger.info("--- New Request (Modularized Backend) ---")
+    logger.info("--- New Request (Gemini Backend) ---")
     
     try:
+        # Parse dietary constraints
+        try:
+            constraints_list = json.loads(dietary_constraints) if dietary_constraints else []
+        except:
+            constraints_list = []
+
+        preferences = {
+            "cuisine": cuisine,
+            "spice_level": spice_level,
+            "dietary_constraints": constraints_list,
+            "budget_sensitivity": budget_sensitivity
+        }
+
         all_dishes = []
         for img_file in images:
             image_data = await img_file.read()
-            dishes = await analyze_image(image_data)
-            all_dishes.extend(dishes)
+            # Call the extraction function
+            dishes_data = extract_menu(image_data, preferences)
+            
+            for d in dishes_data:
+                # Ensure all required fields are present; Pydantic will handle types
+                all_dishes.append(Dish(**d))
 
         logger.info(f"Successfully processed menu. Found {len(all_dishes)} items.")
         return MenuAnalysisResponse(dishes=all_dishes)
 
     except Exception as e:
-        logger.error(f"Processing Error: {e}")
+        err_msg = str(e)
+        logger.error(f"Processing Error: {err_msg}")
         logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Menu Analysis Failed: {str(e)}")
+        
+        if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+            raise HTTPException(
+                status_code=429, 
+                detail="Gemini API Quota Exceeded. Please try again in a few minutes or switch to a different API key."
+            )
+            
+        raise HTTPException(status_code=500, detail=f"Menu Analysis Failed: {err_msg}")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
