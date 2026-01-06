@@ -226,7 +226,7 @@ export default function Hero({ setStep }: HeroProps) {
                         <svg width="100" height="100" viewBox="0 0 100 100" fill="none" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' }}>
                             <motion.path
                                 d="M 15 60 C 25 60, 35 20, 50 20 C 70 20, 60 80, 48 80 C 35 80, 40 45, 85 55"
-                                stroke="white"
+                                stroke="var(--foreground)"
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 initial={{ pathLength: 0 }}
@@ -235,7 +235,7 @@ export default function Hero({ setStep }: HeroProps) {
                             />
                             <motion.path
                                 d="M 78 51 L 85 55 L 78 59"
-                                stroke="white"
+                                stroke="var(--foreground)"
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 initial={{ opacity: 0 }}
