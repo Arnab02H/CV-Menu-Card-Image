@@ -1,22 +1,57 @@
 # 🍝 Linguine AI - Intelligent Gastronomy Assistant
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Framework: Next.js](https://img.shields.io/badge/Framework-Next.js-black)](https://nextjs.org/)
+[![Framework: Next.js 14](https://img.shields.io/badge/Framework-Next.js%2014-black)](https://nextjs.org/)
 [![Backend: FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)](https://fastapi.tiangolo.com/)
-[![AI: Gemini Flash](https://img.shields.io/badge/AI-Gemini%20Flash-blue)](https://deepmind.google/technologies/gemini/)
+[![AI: Gemini 1.5 Flash](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-blue)](https://deepmind.google/technologies/gemini/)
+[![Design: Glassmorphism](https://img.shields.io/badge/Design-Glassmorphism-purple)](https://web.dev/glassmorphism/)
 
-**Linguine AI** is a cutting-edge menu digitizer and personal food assistant designed to eliminate language barriers and dietary uncertainty while dining globally. Using advanced computer vision and LLMs, it transforms static menu images into interactive, personalized dining experiences.
+**Linguine AI** is a state-of-the-art menu digitizer and personal food assistant designed to bridge the gap between global cuisines and local diners. Whether you're traveling abroad or exploring local ethnic eateries, Linguine AI transforms static, often confusing menu images into an interactive, personalized dining guide.
+
+---
+
+## 🌟 Why Linguine AI?
+
+Dining in a foreign country or a specialized restaurant can be overwhelming. Standard translation apps often miss context, and dietary restrictions are hard to communicate. Linguine AI solves this by:
+1. **Contextual Translation**: Not just translating words, but explaining the dish.
+2. **Preference Mapping**: Recommendation engine that thinks like you.
+3. **Dietary Safety**: Instant flagging of allergens and dietary constraints (Veg/Vegan/Gluten-Free).
 
 ---
 
 ## ✨ Key Features
 
-- **📸 AI Menu Digitization**: Instant extraction of dish names, prices, and descriptions from images.
-- **🌍 Real-time Translation**: Deep linguistic support for translating native menu items into English.
-- **🛡️ Personal Dietary Guard**: Flagging items based on `Veg`, `Non-Veg`, `Vegan`, `Gluten-Free`, and `Allergy` constraints.
-- **🌶️ Preference Matching**: Highlighting the best dishes based on your preferred Cuisine, Spice level, and Budget.
-- **🎨 Premium Startup UI**: High-end glassmorphic design, mobile-first responsiveness, and smooth micro-animations.
-- **🤖 Support Chatbot**: Integrated AI assistant to help you navigate the platform and answer common questions.
+### 📸 AI Menu Digitization & Vision
+*   **Instant Extraction**: Uses Google Gemini 1.5 Flash to extract dish names, prices, and descriptions from any menu photo.
+*   **Vision-Powered Translation**: Context-aware translation of native menu items into English with deep cultural descriptions.
+
+### 🛡️ Smart Personalization
+*   **Dietary Guard**: Real-time flagging for `Veg`, `Non-Veg`, `Vegan`, `Gluten-Free`, and custom allergies.
+*   **Preference Matching**: Intelligent ranking of dishes based on your preferred **Cuisine**, **Spice Level**, and **Budget Sensitivity**.
+
+### 🎨 Premium User Experience
+*   **Glassmorphic Design**: A sleek, modern UI with depth, blur effects, and high-end aesthetics.
+*   **Micro-Animations**: Smooth transitions powered by Framer Motion for a "living" interface.
+*   **Mobile-First**: Fully responsive design optimized for scanning menus on the go.
+
+### 🤖 Integrated Support
+*   **AI Chatbot**: A dedicated support assistant to help you navigate the platform and provide suggestions.
+
+---
+
+## 🏗️ System Architecture
+
+Linguine AI is built with a modularized architecture for speed and scalability:
+
+```mermaid
+graph TD
+    A[Mobile/Web Frontend - Next.js] -->|Upload Image + Prefs| B[FastAPI Backend]
+    B -->|Vision Request| C[Google Gemini 1.5 Flash]
+    C -->|Structured JSON| B
+    B -->|Search Query| D[DuckDuckGo Image API]
+    D -->|Dish Images| B
+    B -->|Final Analyzed Menu| A
+```
 
 ---
 
@@ -24,93 +59,94 @@
 
 ### Frontend
 - **Framework**: Next.js 14 (App Router)
-- **Styling**: Vanilla CSS + Tailwind Concepts
+- **Logic**: TypeScript / React
+- **Styling**: Vanilla CSS (Custom Variable System) + Tailwind Concepts
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
 
 ### Backend
-- **Framework**: FastAPI (Python)
-- **AI Core**: Google Gemini 1.5 Flash Latest
-- **Vision**: Google Generative AI Vision
+- **Framework**: FastAPI (Python 3.10+)
+- **AI Model**: Google Gemini 1.5 Flash (Generative AI)
+- **Image Search**: DuckDuckGo Search API
+- **Processing**: Pydantic for data validation
 
 ---
 
-## 🚀 Getting Started (Run Locally)
-
-Follow these steps to get a local copy of Linguine AI up and running on your laptop.
+## 🚀 Getting Started
 
 ### 📋 Prerequisites
-- **Node.js** (v18.0.0 or higher)
-- **Python** (3.10 or higher)
-- **Git**
+- Node.js (v18+)
+- Python (3.10+)
+- A Google Gemini API Key ([Get it here](https://aistudio.google.com/))
 
----
-
-### Step 1: Clone the Repository
+### Initial Setup
 ```bash
 git clone https://github.com/Arnab02H/CV-Menu-Card-Image.git
 cd PERCEPTRON-RKMVERI
 ```
 
-### Step 2: Backend Setup
-1. **Navigate to backend**:
-   ```bash
-   cd backend
-   ```
-2. **Create a Virtual Environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. **Configure Environment Variables**:
-   Create a `.env` file in the `backend/` folder:
-   ```env
-   GOOGLE_API_KEY=your_gemini_api_key_here
-   ```
-5. **Start the API Server**:
-   ```bash
-   uvicorn main:app --reload
-   ```
-   *The backend will now be running at `http://localhost:8000`*
+### 1. Backend Configuration
+```bash
+cd backend
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Unix/macOS:
+source venv/bin/activate
 
----
+pip install -r requirements.txt
+```
+Create a `.env` file in the `backend/` directory:
+```env
+GOOGLE_API_KEY=your_gemini_api_key_here
+```
+Run the server:
+```bash
+python main.py
+```
 
-### Step 3: Frontend Setup
-1. **Navigate to frontend** (Open a new terminal):
-   ```bash
-   cd frontend
-   ```
-2. **Install Packages**:
-   ```bash
-   npm install
-   ```
-3. **Run Development Server**:
-   ```bash
-   npm run dev
-   ```
-   *The website will now be accessible at `http://localhost:3000`*
+### 2. Frontend Configuration
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Open `http://localhost:3000` to start your dining journey!
 
 ---
 
 ## 📖 Usage Guide
 
-1. **Launch**: Open your browser to `http://localhost:3000`.
-2. **Set Preferences**: Choose your cuisine, spice level, and dietary constraints in the floating command center.
-3. **Upload**: Click the `+` button in the input bar and select your menu image.
-4. **Analyze**: Hit the white arrow button.
-5. **Explore**: Toggle between `Recommended` to see the AI's top picks and `All Items` to see the full digitized menu.
+1.  **Set Your Profile**: Input your Cuisine preferences and Dietary constraints in the Home Command Center.
+2.  **Upload Menu**: Take a photo or upload an image of a menu card.
+3.  **Analyze**: Let the AI process the image.
+4.  **Explore**: 
+    *   **Recommended**: See items that perfectly match your profile.
+    *   **All Items**: View the full digitized and translated menu.
+5.  **Enjoy**: Click on any dish to see a real image of how it looks!
+
+---
+
+## 👨‍💻 About the Developer
+
+**Arnab Bera** is the visionary behind Linguine AI. As a Data Scientist and CMI student, Arnab is passionate about using AI to solve real-world accessibility problems.
+
+*   [LinkedIn Profile](https://www.linkedin.com/in/arnab-bera-65a452229/)
+*   [GitHub Portfolio](https://github.com/Arnab02H)
 
 ---
 
 ## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-*Created with love by Arnab Bera.*
+*Created with ❤️ by Arnab Bera. Bridging cultures through code.*
