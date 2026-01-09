@@ -11,6 +11,7 @@ class Dish(BaseModel):
     calories: Optional[str] = "N/A"
     dietary_tags: List[str] = []
     safety_score: int = 10  # 1-10 based on dietary match
+    image_url: Optional[str] = None
     original_language: Optional[str] = None
 
 class MenuAnalysisResponse(BaseModel):

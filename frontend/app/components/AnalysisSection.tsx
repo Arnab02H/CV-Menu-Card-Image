@@ -45,6 +45,8 @@ export default function AnalysisSection({
     const [isMobile, setIsMobile] = useState(false);
     const [filter, setFilter] = useState<'all' | 'recommended'>('recommended');
     const [showInputBar, setShowInputBar] = useState(true);
+    const [dishImages, setDishImages] = useState<{ [key: string]: string }>({});
+    const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
     const lastScrollY = useRef(0);
 
     useEffect(() => {
@@ -85,6 +87,24 @@ export default function AnalysisSection({
         e.stopPropagation();
         setPreviewUrl(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
+    const fetchDishImage = async (dishName: string, translatedName?: string) => {
+        const nameToSearch = translatedName || dishName;
+        if (dishImages[nameToSearch] || loadingImages[nameToSearch]) return;
+
+        setLoadingImages(prev => ({ ...prev, [nameToSearch]: true }));
+        try {
+            const response = await fetch(`http://localhost:8000/search-image?dish_name=${encodeURIComponent(nameToSearch)}`);
+            if (response.ok) {
+                const data = await response.json();
+                setDishImages(prev => ({ ...prev, [nameToSearch]: data.image_url }));
+            }
+        } catch (err) {
+            console.error("Failed to fetch image:", err);
+        } finally {
+            setLoadingImages(prev => ({ ...prev, [nameToSearch]: false }));
+        }
     };
 
     return (
@@ -458,6 +478,85 @@ export default function AnalysisSection({
                                                 <span style={{ opacity: 0.9 }}>{dish.match_reason}</span>
                                             </div>
                                         )}
+
+                                        {/* View Image Section */}
+                                        <div style={{ marginTop: '0.8rem' }}>
+                                            {dishImages[dish.translated_name || dish.dish_name] ? (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    style={{
+                                                        width: '100%',
+                                                        height: '180px',
+                                                        borderRadius: '12px',
+                                                        overflow: 'hidden',
+                                                        border: '1px solid var(--glass-border)',
+                                                        position: 'relative'
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={dishImages[dish.translated_name || dish.dish_name]}
+                                                        alt={dish.dish_name}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    />
+                                                    <button
+                                                        onClick={() => {
+                                                            const name = dish.translated_name || dish.dish_name;
+                                                            setDishImages(prev => {
+                                                                const next = { ...prev };
+                                                                delete next[name];
+                                                                return next;
+                                                            });
+                                                        }}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: '8px',
+                                                            right: '8px',
+                                                            background: 'rgba(0,0,0,0.6)',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '50%',
+                                                            width: '24px',
+                                                            height: '24px',
+                                                            cursor: 'pointer',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center'
+                                                        }}
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </motion.div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => fetchDishImage(dish.dish_name, dish.translated_name)}
+                                                    disabled={loadingImages[dish.translated_name || dish.dish_name]}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.6rem',
+                                                        borderRadius: '10px',
+                                                        background: 'rgba(255,255,255,0.05)',
+                                                        border: '1px solid var(--glass-border)',
+                                                        color: 'white',
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: 600,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '0.5rem',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                >
+                                                    {loadingImages[dish.translated_name || dish.dish_name] ? (
+                                                        <div className="animate-spin" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.2)', borderTop: '2px solid white', borderRadius: '50%' }}></div>
+                                                    ) : (
+                                                        <ImageIcon size={16} />
+                                                    )}
+                                                    {loadingImages[dish.translated_name || dish.dish_name] ? 'Searching...' : 'View Dish Image'}
+                                                </button>
+                                            )}
+                                        </div>
                                     </motion.div>
                                 ))}
                         </div>

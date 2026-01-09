@@ -6,6 +6,7 @@ from typing import List, Optional
 from models import MenuAnalysisResponse, Dish
 from dotenv import load_dotenv
 from extract_text import extract_menu
+from services.image_service import get_dish_image_url
 import json
 
 # Setup logging
@@ -27,6 +28,17 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"status": "ok", "engine": "EasyOCR + DeepTranslate (Modularized)"}
+
+@app.get("/search-image")
+async def search_image(dish_name: str):
+    if not dish_name:
+        raise HTTPException(status_code=400, detail="Dish name is required")
+    
+    image_url = get_dish_image_url(dish_name)
+    if not image_url:
+        raise HTTPException(status_code=404, detail="Image not found")
+        
+    return {"image_url": image_url}
 
 @app.post("/analyze-menu", response_model=MenuAnalysisResponse)
 async def analyze_menu(

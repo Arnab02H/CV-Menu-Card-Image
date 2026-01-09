@@ -50,13 +50,14 @@ def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List
     1. dish_name: The name of the dish as it appears on the menu.
     2. price: The price with currency (e.g., "$12.99" or "₹450").
     3. description: A short, appetizing description in English.
-    4. translated_name: English name if the original is not in English.
-    5. original_language: The language the menu is written in.
-    6. is_recommended: Boolean. True ONLY if it strictly fits ALL user preferences and dietary constraints.
-    7. match_reason: Explain EXACTLY how it matches (or conflicts with) the user's dietary tags and preferences.
-    8. calories: Estimated calories (e.g., "450" or "Low").
-    9. dietary_tags: List of tags like ["Veg", "Non-Veg", "Vegan", "GF", "Spicy", "Nut-Free"].
-    10. safety_score: Integer 1-10 (10 = perfectly safe/compatible, 1 = dangerous/incompatible).
+    4. translated_name: MANDATORY. The standardized English name of the dish (e.g., "Chicken Biryani").
+    5. image_prompt: MANDATORY. A highly detailed (50-word) visual description of the dish. Describe the specific colors, textures, ingredients, and traditional plating style. (e.g. "A steaming bowl of aromatic long-grain basmati rice colored with saffron, tender pieces of marinated chicken tucked inside, garnished with fried onions, fresh mint leaves, and a boiled egg, served in a traditional clay pot.")
+    6. original_language: The language the menu is written in.
+    7. is_recommended: Boolean. True ONLY if it strictly fits ALL user preferences and dietary constraints.
+    8. match_reason: Explain EXACTLY how it matches (or conflicts with) the user's dietary tags and preferences.
+    9. calories: Estimated calories (e.g., "450" or "Low").
+    10. dietary_tags: List of tags like ["Veg", "Non-Veg", "Vegan", "GF", "Spicy", "Nut-Free"].
+    11. safety_score: Integer 1-10 (10 = perfectly safe/compatible, 1 = dangerous/incompatible).
 
     Return ONLY a valid JSON array of objects. No markdown, no intro/outro.
     """
@@ -74,7 +75,15 @@ def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List
         if json_match:
             text_response = json_match.group(0)
         
-        return json.loads(text_response)
+        import random
+        from urllib.parse import quote
+        dishes = json.loads(text_response)
+        
+        # Image generation is now handled on-demand by the frontend calling /search-image
+        for dish in dishes:
+            dish['image_url'] = None
+            
+        return dishes
 
     except Exception as e:
         print(f"Gemini API Error: {e}")
