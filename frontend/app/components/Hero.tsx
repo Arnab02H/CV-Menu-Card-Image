@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Pizza, Coffee, Salad, Wine, Utensils, Globe, ArrowRight, Sparkles, Signal, Wifi, Battery } from "lucide-react";
+import { track } from "@vercel/analytics";
 
 interface HeroProps {
     setStep: (step: number) => void;
@@ -97,7 +98,7 @@ export default function Hero({ setStep }: HeroProps) {
                             lineHeight: 1.6
                         }}
                     >
-                       Linguine AI visually understands restaurant menus, translates them, and recommends what you should eat—based on your preferences and dietary needs.
+                        Linguine AI visually understands restaurant menus, translates them, and recommends what you should eat—based on your preferences and dietary needs.
                     </motion.p>
 
                     <motion.div
@@ -110,7 +111,10 @@ export default function Hero({ setStep }: HeroProps) {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="btn-primary hero-btn"
-                            onClick={() => setStep(1)}
+                            onClick={() => {
+                                track('start_analyzing_hero');
+                                setStep(1);
+                            }}
                         >
                             Start Analyzing <ArrowRight size={20} />
                         </motion.button>

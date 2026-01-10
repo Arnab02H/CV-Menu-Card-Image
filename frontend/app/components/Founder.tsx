@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, ShieldCheck, ArrowRight, Sparkles, User, Linkedin } from "lucide-react";
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 
 interface FounderProps {
     setStep: (step: number) => void;
@@ -45,6 +46,7 @@ export default function Founder({ setStep }: FounderProps) {
                         href="https://www.linkedin.com/in/arnab-bera-65a452229/"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => track('founder_linkedin_click')}
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
@@ -220,6 +222,7 @@ export default function Founder({ setStep }: FounderProps) {
                         className="btn-primary"
                         style={{ marginTop: '2rem', padding: '0.8rem 2.2rem', fontSize: '1rem', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                         onClick={() => {
+                            track('start_journey_founder');
                             setStep(1);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}

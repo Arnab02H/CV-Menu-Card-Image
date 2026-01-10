@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, Sun, Moon, X, Menu } from "lucide-react";
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 
 interface NavbarProps {
     isDarkMode: boolean;
@@ -68,7 +69,10 @@ export default function Navbar({ isDarkMode, setIsDarkMode, setStep }: NavbarPro
                     >
                         {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
                     </div>
-                    <button className="btn-primary" style={{ padding: '0.6rem 1.2rem', fontSize: '0.85rem' }} onClick={() => setStep(1)}>
+                    <button className="btn-primary" style={{ padding: '0.6rem 1.2rem', fontSize: '0.85rem' }} onClick={() => {
+                        track('analyze_now_nav');
+                        setStep(1);
+                    }}>
                         Analyze Now
                     </button>
                 </div>

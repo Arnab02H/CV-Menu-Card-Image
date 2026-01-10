@@ -11,6 +11,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import AnalysisSection from "./components/AnalysisSection";
 import ResultsStep from "./components/ResultsStep";
+import { track } from "@vercel/analytics";
 
 export default function Home() {
     const [step, setStepState] = useState(0); // 0 = Landing, 1 = Analysis, 2 = Results
@@ -82,6 +83,7 @@ export default function Home() {
     const runAnalysis = async () => {
         setIsAnalyzing(true);
         setError(null);
+        track('analysis_started');
         const formData = new FormData();
         files.forEach(file => formData.append("images", file));
         formData.append("cuisine", cuisine);
@@ -103,13 +105,16 @@ export default function Home() {
 
             if (data && Array.isArray(data.dishes)) {
                 setAnalysisResults(data.dishes);
+                track('analysis_success', { dishCount: data.dishes.length });
             } else {
                 setError("No dishes found or invalid format.");
+                track('analysis_no_results');
             }
         } catch (err: any) {
             console.error("Analysis failed:", err);
             setError(err.message || "Something went wrong.");
             setAnalysisResults([]);
+            track('analysis_error', { error: err.message });
         } finally {
             setIsAnalyzing(false);
         }
@@ -123,6 +128,7 @@ export default function Home() {
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
+        track('download_json');
     };
 
     return (
