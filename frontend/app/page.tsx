@@ -55,6 +55,7 @@ export default function Home() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [budgetSensitivity, setBudgetSensitivity] = useState("Normal");
+    const [targetLanguage, setTargetLanguage] = useState("English");
     const [analysisResults, setAnalysisResults] = useState<any[]>([]);
 
     useEffect(() => {
@@ -90,6 +91,7 @@ export default function Home() {
         formData.append("spice_level", spiceLevel);
         formData.append("dietary_constraints", JSON.stringify(dietaryConstraints));
         formData.append("budget_sensitivity", budgetSensitivity);
+        formData.append("target_language", targetLanguage);
 
         try {
             const response = await fetch("http://localhost:8000/analyze-menu", {
@@ -167,6 +169,8 @@ export default function Home() {
                         analysisResults={analysisResults}
                         budgetSensitivity={budgetSensitivity}
                         setBudgetSensitivity={setBudgetSensitivity}
+                        targetLanguage={targetLanguage}
+                        setTargetLanguage={setTargetLanguage}
                         error={error}
                     />
                 )}

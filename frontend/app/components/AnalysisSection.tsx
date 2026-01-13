@@ -19,6 +19,8 @@ interface AnalysisSectionProps {
     analysisResults?: any[];
     budgetSensitivity: string;
     setBudgetSensitivity: (val: string) => void;
+    targetLanguage: string;
+    setTargetLanguage: (val: string) => void;
     error: string | null;
 }
 
@@ -37,6 +39,8 @@ export default function AnalysisSection({
     analysisResults = [],
     budgetSensitivity,
     setBudgetSensitivity,
+    targetLanguage,
+    setTargetLanguage,
     error
 }: AnalysisSectionProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -691,6 +695,43 @@ export default function AnalysisSection({
                                 <option value="Premium" style={{ background: '#111' }}>Premium</option>
                             </select>
                             <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, pointerEvents: 'none', color: budgetSensitivity !== "Normal" ? 'var(--primary)' : 'white' }} />
+                        </div>
+
+                        {/* Language */}
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <select
+                                value={targetLanguage}
+                                onChange={e => setTargetLanguage(e.target.value)}
+                                style={{
+                                    appearance: 'none',
+                                    background: targetLanguage !== "English" ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
+                                    border: targetLanguage !== "English" ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
+                                    color: 'white',
+                                    padding: '0.5rem 2.2rem 0.5rem 1rem',
+                                    borderRadius: '100px',
+                                    fontSize: '0.85rem',
+                                    cursor: 'pointer',
+                                    fontWeight: 700,
+                                    height: '42px',
+                                    minWidth: '135px',
+                                    outline: 'none',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                <option value="English" style={{ background: '#111' }}>Language?</option>
+                                <option value="English" style={{ background: '#111' }}>English</option>
+                                <option value="Spanish" style={{ background: '#111' }}>Spanish</option>
+                                <option value="French" style={{ background: '#111' }}>French</option>
+                                <option value="German" style={{ background: '#111' }}>German</option>
+                                <option value="Hindi" style={{ background: '#111' }}>Hindi</option>
+                                <option value="Bengali" style={{ background: '#111' }}>Bengali</option>
+                                <option value="Japanese" style={{ background: '#111' }}>Japanese</option>
+                                <option value="Chinese" style={{ background: '#111' }}>Chinese</option>
+                                <option value="Arabic" style={{ background: '#111' }}>Arabic</option>
+                                <option value="Russian" style={{ background: '#111' }}>Russian</option>
+                                <option value="Portuguese" style={{ background: '#111' }}>Portuguese</option>
+                            </select>
+                            <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, pointerEvents: 'none', color: targetLanguage !== "English" ? 'var(--primary)' : 'white' }} />
                         </div>
 
                         <div style={{ flex: 1, minWidth: '10px' }} /> {/* Spacer */}

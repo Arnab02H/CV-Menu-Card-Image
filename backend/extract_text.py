@@ -30,6 +30,7 @@ def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List
         - Spice Tolerance: {preferences.get('spice_level', 'Medium')}
         - Dietary Constraints: {', '.join(preferences.get('dietary_constraints', []))}
         - Budget Sensitivity: {preferences.get('budget_sensitivity', 'Normal')}
+        - Target Language for Output: {preferences.get('target_language', 'English')}
         """
 
     prompt = f"""
@@ -45,16 +46,17 @@ def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List
     - If "Non-Veg" is selected, prioritize dishes with meat/seafood.
     - If "Allergies" is selected, identify any common allergens (Nuts, Dairy, Shellfish, etc.) and lower the safety_score accordingly if present.
     - {preferences.get('spice_level', 'Medium')} spice level MUST be respected.
+    - The `description` and `translated_name` fields MUST be in {preferences.get('target_language', 'English')}.
     
     For each dish found, extract:
     1. dish_name: The name of the dish as it appears on the menu.
     2. price: The price with currency (e.g., "$12.99" or "₹450").
-    3. description: A short, appetizing description in English.
-    4. translated_name: MANDATORY. The standardized English name of the dish (e.g., "Chicken Biryani").
-    5. image_prompt: MANDATORY. A highly detailed (50-word) visual description of the dish. Describe the specific colors, textures, ingredients, and traditional plating style. (e.g. "A steaming bowl of aromatic long-grain basmati rice colored with saffron, tender pieces of marinated chicken tucked inside, garnished with fried onions, fresh mint leaves, and a boiled egg, served in a traditional clay pot.")
+    3. description: A short, appetizing description in {preferences.get('target_language', 'English')}.
+    4. translated_name: MANDATORY. The name of the dish translated into {preferences.get('target_language', 'English')}.
+    5. image_prompt: MANDATORY. A highly detailed (50-word) visual description of the dish in English (for image generation). Describe the specific colors, textures, ingredients, and traditional plating style.
     6. original_language: The language the menu is written in.
     7. is_recommended: Boolean. True ONLY if it strictly fits ALL user preferences and dietary constraints.
-    8. match_reason: Explain EXACTLY how it matches (or conflicts with) the user's dietary tags and preferences.
+    8. match_reason: Explain EXACTLY how it matches (or conflicts with) the user's dietary tags and preferences (In {preferences.get('target_language', 'English')}).
     9. calories: Estimated calories (e.g., "450" or "Low").
     10. dietary_tags: List of tags like ["Veg", "Non-Veg", "Vegan", "GF", "Spicy", "Nut-Free"].
     11. safety_score: Integer 1-10 (10 = perfectly safe/compatible, 1 = dangerous/incompatible).

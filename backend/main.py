@@ -46,7 +46,8 @@ async def analyze_menu(
     cuisine: Optional[str] = Form(None),
     spice_level: Optional[str] = Form("medium"),
     dietary_constraints: Optional[str] = Form("[]"),
-    budget_sensitivity: Optional[str] = Form(None)
+    budget_sensitivity: Optional[str] = Form(None),
+    target_language: Optional[str] = Form("English")
 ):
     logger.info("--- New Request (Gemini Backend) ---")
     
@@ -61,7 +62,8 @@ async def analyze_menu(
             "cuisine": cuisine,
             "spice_level": spice_level,
             "dietary_constraints": constraints_list,
-            "budget_sensitivity": budget_sensitivity
+            "budget_sensitivity": budget_sensitivity,
+            "target_language": target_language
         }
 
         all_dishes = []
