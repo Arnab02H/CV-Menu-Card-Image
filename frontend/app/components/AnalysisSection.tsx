@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, ChevronDown, Check, ArrowUp, Plus, X, Utensils, Image as ImageIcon } from "lucide-react";
+import { Upload, ChevronDown, Check, ArrowUp, Plus, X, Utensils, AudioLines, Image as ImageIcon, Camera, FileText, Square } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface AnalysisSectionProps {
@@ -13,7 +13,7 @@ interface AnalysisSectionProps {
     setSpiceLevel: (val: string) => void;
     dietaryConstraints: string[];
     toggleConstraint: (tag: string) => void;
-    runAnalysis: () => void;
+    runAnalysis: (voiceQuery?: string) => void;
     isAnalyzing: boolean;
     setStep: (step: number) => void;
     analysisResults?: any[];
@@ -23,6 +23,144 @@ interface AnalysisSectionProps {
     setTargetLanguage: (val: string) => void;
     error: string | null;
 }
+
+const CustomDropdown = ({ value, onChange, options, placeholder, defaultVal = "", isMobile = false }: any) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const isActive = value !== defaultVal;
+    
+    return (
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                style={{
+                    appearance: 'none',
+                    background: isActive ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
+                    border: isActive ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.08)',
+                    color: 'white',
+                    padding: '0.4rem 2.2rem 0.4rem 1.2rem',
+                    borderRadius: '100px',
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    height: '38px',
+                    minWidth: '120px',
+                    outline: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.5rem',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.2s ease',
+                    boxShadow: isActive ? '0 0 10px rgba(var(--primary-rgb), 0.2)' : 'none'
+                }}
+            >
+                {options.find((o: any) => o.id === value)?.label || placeholder}
+                <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, color: isActive ? 'var(--primary)' : 'white', transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+            </button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <div 
+                            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 90 }} 
+                            onClick={() => setIsOpen(false)}
+                        />
+                        <motion.div
+                            initial={isMobile ? { opacity: 0, y: '100%' } : { opacity: 0, y: -10, scale: 0.95 }}
+                            animate={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
+                            exit={isMobile ? { opacity: 0, y: '100%' } : { opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
+                            style={isMobile ? {
+                                position: 'fixed',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                maxHeight: '50vh',
+                                overflowY: 'auto',
+                                background: '#151518',
+                                borderTop: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '24px 24px 0 0',
+                                padding: '1.5rem 1rem 3rem 1rem', // Safe area padding
+                                boxShadow: '0 -20px 40px rgba(0,0,0,0.5)',
+                                zIndex: 1000,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.2rem',
+                            } : {
+                                position: 'absolute',
+                                bottom: 'calc(100% + 10px)',
+                                left: 0,
+                                minWidth: '160px',
+                                maxHeight: '250px',
+                                overflowY: 'auto',
+                                background: '#151518',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '16px',
+                                padding: '0.4rem',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.3)',
+                                zIndex: 100,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.2rem',
+                                backdropFilter: 'blur(20px)'
+                            }}
+                            className="hide-scroll"
+                        >
+                            <button
+                                onClick={() => { onChange(defaultVal); setIsOpen(false); }}
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: '0.6rem 0.8rem',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    fontSize: '0.85rem',
+                                    textAlign: 'left'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                                {placeholder}
+                                {value === defaultVal && <Check size={14} color="#3b82f6" />}
+                            </button>
+                            <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '0.2rem 0', flexShrink: 0 }} />
+                            {options.map((opt: any) => (
+                                <button
+                                    key={opt.id}
+                                    onClick={() => { onChange(opt.id); setIsOpen(false); }}
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '0.6rem 0.8rem',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        borderRadius: '10px',
+                                        cursor: 'pointer',
+                                        color: 'white',
+                                        fontWeight: 500,
+                                        fontSize: '0.85rem',
+                                        textAlign: 'left'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                >
+                                    {opt.label}
+                                    {value === opt.id && <Check size={14} color="#3b82f6" />}
+                                </button>
+                            ))}
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
 
 export default function AnalysisSection({
     files,
@@ -44,13 +182,68 @@ export default function AnalysisSection({
     error
 }: AnalysisSectionProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const photoInputRef = useRef<HTMLInputElement>(null);
+    const docInputRef = useRef<HTMLInputElement>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isUploadMenuOpen, setIsUploadMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [filter, setFilter] = useState<'all' | 'recommended'>('recommended');
     const [showInputBar, setShowInputBar] = useState(true);
     const [dishImages, setDishImages] = useState<{ [key: string]: string }>({});
     const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
+    const [selectedModel, setSelectedModel] = useState("gemini-flash");
+    const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+    const [isAdaptive, setIsAdaptive] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const [voiceText, setVoiceText] = useState("");
+    const recognitionRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                
+                recognition.onresult = (event: any) => {
+                    let text = "";
+                    for (let i = 0; i < event.results.length; i++) {
+                        text += event.results[i][0].transcript;
+                    }
+                    setVoiceText(text);
+                };
+
+                recognition.onerror = (event: any) => {
+                    console.error("Speech recognition error", event.error);
+                    setIsRecording(false);
+                };
+
+                recognitionRef.current = recognition;
+            }
+        }
+    }, []);
+
+    const toggleRecording = () => {
+        if (!recognitionRef.current) {
+            alert("Voice recognition is not supported in this browser.");
+            return;
+        }
+
+        if (isRecording) {
+            recognitionRef.current.stop();
+            setIsRecording(false);
+            if (files.length > 0) {
+                setTimeout(() => runAnalysis(voiceText), 500);
+            }
+        } else {
+            setVoiceText("");
+            recognitionRef.current.start();
+            setIsRecording(true);
+        }
+    };
     const lastScrollY = useRef(0);
 
     useEffect(() => {
@@ -85,6 +278,7 @@ export default function AnalysisSection({
             setPreviewUrl(url);
             handleFileChange(e);
         }
+        setIsUploadMenuOpen(false);
     };
 
     const clearFile = (e: React.MouseEvent) => {
@@ -110,6 +304,100 @@ export default function AnalysisSection({
             setLoadingImages(prev => ({ ...prev, [nameToSearch]: false }));
         }
     };
+
+    const renderPreferencePills = () => (
+        <>
+            {/* Cuisine */}
+            <CustomDropdown 
+                value={cuisine} 
+                onChange={setCuisine} 
+                options={[
+                    {id: "italian", label: "Italian"}, 
+                    {id: "chinese", label: "Chinese"}, 
+                    {id: "indian", label: "Indian"}, 
+                    {id: "japanese", label: "Japanese"}, 
+                    {id: "mexican", label: "Mexican"}
+                ]}
+                placeholder="Cuisine?"
+                defaultVal=""
+                isMobile={isMobile}
+            />
+
+            {/* Spice */}
+            <CustomDropdown 
+                value={spiceLevel} 
+                onChange={setSpiceLevel} 
+                options={[
+                    {id: "Low", label: "Low"}, 
+                    {id: "Medium", label: "Medium"}, 
+                    {id: "High", label: "High"}
+                ]}
+                placeholder="Spice?"
+                defaultVal="Medium"
+                isMobile={isMobile}
+            />
+
+            {/* Budget */}
+            <CustomDropdown 
+                value={budgetSensitivity} 
+                onChange={setBudgetSensitivity} 
+                options={[
+                    {id: "Value", label: "Value"}, 
+                    {id: "Standard", label: "Standard"}, 
+                    {id: "Premium", label: "Premium"}
+                ]}
+                placeholder="Budget?"
+                defaultVal="Normal"
+                isMobile={isMobile}
+            />
+
+            {/* Language */}
+            <CustomDropdown 
+                value={targetLanguage} 
+                onChange={setTargetLanguage} 
+                options={[ 
+                    {id: "English", label: "English"}, 
+                    {id: "Spanish", label: "Spanish"}, 
+                    {id: "French", label: "French"}, 
+                    {id: "German", label: "German"}, 
+                    {id: "Hindi", label: "Hindi"}, 
+                    {id: "Bengali", label: "Bengali"}, 
+                    {id: "Japanese", label: "Japanese"}, 
+                    {id: "Chinese", label: "Chinese"}, 
+                    {id: "Arabic", label: "Arabic"}, 
+                    {id: "Russian", label: "Russian"}, 
+                    {id: "Portuguese", label: "Portuguese"}
+                ]}
+                placeholder="Language?"
+                defaultVal="English"
+                isMobile={isMobile}
+            />
+
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.1)', flexShrink: 0, margin: '0 0.2rem' }} />
+            {['Veg', 'Non-Veg', 'Allergies', 'Vegan', 'Nut-Free', 'Dairy-Free', 'GF'].map(tag => (
+                <motion.button
+                    key={tag}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => toggleConstraint(tag)}
+                    style={{
+                        padding: '0.5rem 1rem',
+                        borderRadius: '100px',
+                        fontSize: '0.8rem',
+                        whiteSpace: 'nowrap',
+                        background: dietaryConstraints.includes(tag) ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                        border: dietaryConstraints.includes(tag) ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
+                        color: 'white',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        fontWeight: 600
+                    }}
+                >
+                    {tag}
+                </motion.button>
+            ))}
+        </>
+    );
 
     return (
         <motion.section
@@ -354,7 +642,7 @@ export default function AnalysisSection({
                                 <h3 style={{ fontSize: '1.25rem', color: 'var(--foreground)', fontWeight: 800 }}>Analysis Results</h3>
                                 <div style={{ display: 'flex', gap: '0.6rem' }}>
                                     <button onClick={() => setStep(2)} style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--foreground)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', padding: '0.5rem 1rem', borderRadius: '100px', cursor: 'pointer', transition: 'all 0.2s ease' }}>Report</button>
-                                    <button onClick={runAnalysis} style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.1)', border: '1px solid var(--primary)', padding: '0.5rem 1rem', borderRadius: '100px', cursor: 'pointer' }}>Retry</button>
+                                    <button onClick={() => runAnalysis()} style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.1)', border: '1px solid var(--primary)', padding: '0.5rem 1rem', borderRadius: '100px', cursor: 'pointer' }}>Retry</button>
                                 </div>
                             </div>
 
@@ -597,150 +885,27 @@ export default function AnalysisSection({
                         background: 'linear-gradient(180deg, rgba(20, 20, 25, 0.95) 0%, rgba(15, 15, 18, 0.98) 100%)',
                         backdropFilter: 'blur(30px)',
                         borderRadius: '28px',
-                        overflow: 'hidden'
+                        position: 'relative'
                     }}
                 >
-                    {/* Top Row: Selectors (Horizontal Scroll for Mobile) */}
-                    <div className="hide-scroll" style={{
-                        display: 'flex',
-                        gap: '0.6rem',
-                        flexWrap: 'nowrap',
-                        overflowX: 'auto',
-                        padding: '0.2rem',
-                    }}>
-                        {/* Cuisine */}
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                            <select
-                                value={cuisine}
-                                onChange={e => setCuisine(e.target.value)}
-                                style={{
-                                    appearance: 'none',
-                                    background: cuisine ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
-                                    border: cuisine ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                                    color: 'white',
-                                    padding: '0.5rem 2.2rem 0.5rem 1rem',
-                                    borderRadius: '100px',
-                                    fontSize: '0.85rem',
-                                    cursor: 'pointer',
-                                    fontWeight: 700,
-                                    height: '42px',
-                                    minWidth: '135px',
-                                    outline: 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <option value="" style={{ background: '#111' }}>Cuisine?</option>
-                                <option value="italian" style={{ background: '#111' }}>Italian</option>
-                                <option value="chinese" style={{ background: '#111' }}>Chinese</option>
-                                <option value="indian" style={{ background: '#111' }}>Indian</option>
-                                <option value="japanese" style={{ background: '#111' }}>Japanese</option>
-                                <option value="mexican" style={{ background: '#111' }}>Mexican</option>
-                            </select>
-                            <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, pointerEvents: 'none', color: cuisine ? 'var(--primary)' : 'white' }} />
+                    {isRecording ? (
+                        <div style={{ fontSize: '1.1rem', color: 'white', padding: '0.2rem 0.5rem', marginBottom: '0.8rem', fontWeight: 500 }}>
+                            {voiceText || "Listening..."}
                         </div>
-
-                        {/* Spice */}
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                            <select
-                                value={spiceLevel}
-                                onChange={e => setSpiceLevel(e.target.value)}
-                                style={{
-                                    appearance: 'none',
-                                    background: spiceLevel && spiceLevel !== "Medium" ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
-                                    border: spiceLevel && spiceLevel !== "Medium" ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                                    color: 'white',
-                                    padding: '0.5rem 2.2rem 0.5rem 1rem',
-                                    borderRadius: '100px',
-                                    fontSize: '0.85rem',
-                                    cursor: 'pointer',
-                                    fontWeight: 700,
-                                    height: '42px',
-                                    minWidth: '135px',
-                                    outline: 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <option value="Medium" style={{ background: '#111' }}>Spice?</option>
-                                <option value="Low" style={{ background: '#111' }}>Low</option>
-                                <option value="Medium" style={{ background: '#111' }}>Medium</option>
-                                <option value="High" style={{ background: '#111' }}>High</option>
-                            </select>
-                            <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, pointerEvents: 'none', color: spiceLevel && spiceLevel !== "Medium" ? 'var(--primary)' : 'white' }} />
+                    ) : voiceText ? (
+                        <div style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.9)', padding: '0.2rem 0.5rem', marginBottom: '0.8rem', fontWeight: 400 }}>
+                            "{voiceText}"
                         </div>
-
-                        {/* Budget */}
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                            <select
-                                value={budgetSensitivity}
-                                onChange={e => setBudgetSensitivity(e.target.value)}
-                                style={{
-                                    appearance: 'none',
-                                    background: budgetSensitivity !== "Normal" ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
-                                    border: budgetSensitivity !== "Normal" ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                                    color: 'white',
-                                    padding: '0.5rem 2.2rem 0.5rem 1rem',
-                                    borderRadius: '100px',
-                                    fontSize: '0.85rem',
-                                    cursor: 'pointer',
-                                    fontWeight: 700,
-                                    height: '42px',
-                                    minWidth: '135px',
-                                    outline: 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <option value="Normal" style={{ background: '#111' }}>Budget?</option>
-                                <option value="Value" style={{ background: '#111' }}>Value</option>
-                                <option value="Standard" style={{ background: '#111' }}>Standard</option>
-                                <option value="Premium" style={{ background: '#111' }}>Premium</option>
-                            </select>
-                            <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, pointerEvents: 'none', color: budgetSensitivity !== "Normal" ? 'var(--primary)' : 'white' }} />
+                    ) : isMobile ? (
+                        <div style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.4)', padding: '0.2rem 0.5rem', marginBottom: '0.8rem', fontWeight: 400 }}>
+                            How can I help you dine?
                         </div>
-
-                        {/* Language */}
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                            <select
-                                value={targetLanguage}
-                                onChange={e => setTargetLanguage(e.target.value)}
-                                style={{
-                                    appearance: 'none',
-                                    background: targetLanguage !== "English" ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
-                                    border: targetLanguage !== "English" ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                                    color: 'white',
-                                    padding: '0.5rem 2.2rem 0.5rem 1rem',
-                                    borderRadius: '100px',
-                                    fontSize: '0.85rem',
-                                    cursor: 'pointer',
-                                    fontWeight: 700,
-                                    height: '42px',
-                                    minWidth: '135px',
-                                    outline: 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <option value="English" style={{ background: '#111' }}>Language?</option>
-                                <option value="English" style={{ background: '#111' }}>English</option>
-                                <option value="Spanish" style={{ background: '#111' }}>Spanish</option>
-                                <option value="French" style={{ background: '#111' }}>French</option>
-                                <option value="German" style={{ background: '#111' }}>German</option>
-                                <option value="Hindi" style={{ background: '#111' }}>Hindi</option>
-                                <option value="Bengali" style={{ background: '#111' }}>Bengali</option>
-                                <option value="Japanese" style={{ background: '#111' }}>Japanese</option>
-                                <option value="Chinese" style={{ background: '#111' }}>Chinese</option>
-                                <option value="Arabic" style={{ background: '#111' }}>Arabic</option>
-                                <option value="Russian" style={{ background: '#111' }}>Russian</option>
-                                <option value="Portuguese" style={{ background: '#111' }}>Portuguese</option>
-                            </select>
-                            <ChevronDown size={14} style={{ position: 'absolute', right: 12, opacity: 0.6, pointerEvents: 'none', color: targetLanguage !== "English" ? 'var(--primary)' : 'white' }} />
-                        </div>
-
-                        <div style={{ flex: 1, minWidth: '10px' }} /> {/* Spacer */}
-                    </div>
-
-                    {/* Bottom Row: Dietary Tags & Action */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                    ) : null}
+                    {/* Unified Action Bar: Upload, Preferences & Actions */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        
                         {/* File Upload/Preview */}
-                        <div style={{ position: 'relative' }}>
+                        <div style={{ position: 'relative', flexShrink: 0, marginTop: '2px' }}>
                             {previewUrl ? (
                                 <div style={{
                                     width: '40px',
@@ -766,7 +931,7 @@ export default function AnalysisSection({
                                 </div>
                             ) : (
                                 <div
-                                    onClick={() => fileInputRef.current?.click()}
+                                    onClick={() => isMobile ? setIsUploadMenuOpen(!isUploadMenuOpen) : fileInputRef.current?.click()}
                                     style={{
                                         width: '40px',
                                         height: '40px',
@@ -785,44 +950,217 @@ export default function AnalysisSection({
                                 </div>
                             )}
                             <input ref={fileInputRef} type="file" multiple onChange={onFileChange} accept="image/*" style={{ display: 'none' }} />
+
+                            {/* Upload Popover (Mobile Only) */}
+                            <AnimatePresence>
+                                {isUploadMenuOpen && isMobile && (
+                                    <>
+                                        {/* Invisible overlay */}
+                                        <div 
+                                            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 90 }} 
+                                            onClick={() => setIsUploadMenuOpen(false)}
+                                        />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.2 }}
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: 'calc(100% + 15px)',
+                                                left: 0,
+                                                width: '200px',
+                                                background: '#151518',
+                                                border: '1px solid rgba(255,255,255,0.08)',
+                                                borderRadius: '16px',
+                                                padding: '0.4rem',
+                                                boxShadow: '0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.3)',
+                                                zIndex: 100,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '0.2rem',
+                                                backdropFilter: 'blur(20px)'
+                                            }}
+                                        >
+                                            <button
+                                                onClick={() => { cameraInputRef.current?.click(); setIsUploadMenuOpen(false); }}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 0.8rem', color: 'white', background: 'transparent', border: 'none', borderRadius: '10px', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.2s' }}
+                                                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                            >
+                                                <Camera size={18} opacity={0.7} /> <span>Camera</span>
+                                            </button>
+                                            <button
+                                                onClick={() => { photoInputRef.current?.click(); setIsUploadMenuOpen(false); }}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 0.8rem', color: 'white', background: 'transparent', border: 'none', borderRadius: '10px', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.2s' }}
+                                                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                            >
+                                                <ImageIcon size={18} opacity={0.7} /> <span>Photos</span>
+                                            </button>
+                                            <button
+                                                onClick={() => { docInputRef.current?.click(); setIsUploadMenuOpen(false); }}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 0.8rem', color: 'white', background: 'transparent', border: 'none', borderRadius: '10px', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.2s' }}
+                                                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                            >
+                                                <FileText size={18} opacity={0.7} /> <span>Files</span>
+                                            </button>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+
+                            {/* Hidden mobile specific inputs */}
+                            <input ref={cameraInputRef} type="file" onChange={onFileChange} accept="image/*" capture="environment" style={{ display: 'none' }} />
+                            <input ref={photoInputRef} type="file" multiple onChange={onFileChange} accept="image/*" style={{ display: 'none' }} />
+                            <input ref={docInputRef} type="file" multiple onChange={onFileChange} accept="*/*" style={{ display: 'none' }} />
                         </div>
 
-                        {/* Dietary Tags (Horizontal Scroll) */}
-                        <div className="hide-scroll" style={{
-                            flex: 1,
-                            display: 'flex',
-                            gap: '0.4rem',
-                            overflowX: 'auto',
-                            padding: '0.1rem'
-                        }}>
-                            {['Veg', 'Non-Veg', 'Allergies', 'Vegan', 'Nut-Free', 'Dairy-Free', 'GF'].map(tag => (
-                                <motion.button
-                                    key={tag}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => toggleConstraint(tag)}
-                                    style={{
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '100px',
-                                        fontSize: '0.8rem',
-                                        whiteSpace: 'nowrap',
-                                        background: dietaryConstraints.includes(tag) ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                                        border: dietaryConstraints.includes(tag) ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                                        color: 'white',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
-                                        fontWeight: 600
-                                    }}
-                                >
-                                    {tag}
-                                </motion.button>
-                            ))}
+                        {/* Desktop: Render pills directly inline in the center */}
+                        {!isMobile && (
+                            <div className="hide-scroll" style={{
+                                flex: 1,
+                                display: 'flex',
+                                gap: '0.5rem',
+                                flexWrap: 'wrap',
+                                overflowX: 'visible',
+                                alignItems: 'center',
+                                paddingBottom: '0.2rem',
+                                paddingLeft: '0.8rem'
+                            }}>
+                                {renderPreferencePills()}
+                            </div>
+                        )}
+
+                        {/* Custom Model Selection Dropdown */}
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexShrink: 0, marginLeft: 'auto' }}>
+                            <button
+                                onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--foreground)',
+                                    opacity: isModelDropdownOpen ? 1 : 0.6,
+                                    padding: '0.4rem 0.2rem 0.4rem 0.6rem',
+                                    fontSize: '0.85rem',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    outline: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.3rem',
+                                    transition: 'all 0.2s ease',
+                                    letterSpacing: '0.02em',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {selectedModel === 'gemini-pro' ? 'Gemini 1.5 Pro' : selectedModel === 'sonnet' ? 'Sonnet 4.6 Adaptive' : 'Gemini 1.5 Flash'}
+                                <ChevronDown size={14} style={{ opacity: 0.5, transform: isModelDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                            </button>
+
+                            <AnimatePresence>
+                                {isModelDropdownOpen && (
+                                    <>
+                                        {/* Invisible overlay to catch clicks outside the popover */}
+                                        <div 
+                                            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 90 }} 
+                                            onClick={() => setIsModelDropdownOpen(false)}
+                                        />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: 'calc(100% + 15px)',
+                                                right: 0,
+                                                width: '280px',
+                                                background: '#151518',
+                                                border: '1px solid rgba(255,255,255,0.08)',
+                                                borderRadius: '16px',
+                                                padding: '0.5rem',
+                                                boxShadow: '0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.3)',
+                                                zIndex: 100,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '0.2rem',
+                                                backdropFilter: 'blur(20px)'
+                                            }}
+                                        >
+                                            {[
+                                                { id: 'gemini-pro', name: 'Gemini 1.5 Pro', desc: 'Most capable for ambitious work', upgrade: true },
+                                                { id: 'sonnet', name: 'Sonnet 4.6', desc: 'Most efficient for everyday tasks' },
+                                                { id: 'gemini-flash', name: 'Gemini 1.5 Flash', desc: 'Fastest for quick answers' }
+                                            ].map((model) => (
+                                                <button
+                                                    key={model.id}
+                                                    onClick={() => { setSelectedModel(model.id); setIsModelDropdownOpen(false); }}
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'flex-start',
+                                                        padding: '0.6rem 0.8rem',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        borderRadius: '10px',
+                                                        cursor: 'pointer',
+                                                        transition: 'background 0.2s',
+                                                        position: 'relative',
+                                                        width: '100%',
+                                                        textAlign: 'left'
+                                                    }}
+                                                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                                    onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                                >
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'white' }}>{model.name}</span>
+                                                        {model.upgrade ? (
+                                                            <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', border: '1px solid rgba(99, 102, 241, 0.4)', color: '#818cf8', borderRadius: '100px', fontWeight: 600 }}>Upgrade</span>
+                                                        ) : selectedModel === model.id ? (
+                                                            <Check size={16} color="#3b82f6" />
+                                                        ) : null}
+                                                    </div>
+                                                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.2rem' }}>{model.desc}</span>
+                                                </button>
+                                            ))}
+                                            
+                                            <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '0.4rem 0' }} />
+                                            
+                                            <div style={{ padding: '0.6rem 0.8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>Adaptive thinking</span>
+                                                    <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.1rem' }}>Thinks for more complex tasks</span>
+                                                </div>
+                                                
+                                                {/* Custom Toggle Switch */}
+                                                <button 
+                                                    onClick={() => setIsAdaptive(!isAdaptive)}
+                                                    style={{
+                                                        width: '36px', height: '20px', borderRadius: '100px',
+                                                        background: isAdaptive ? '#3b82f6' : 'rgba(255,255,255,0.2)',
+                                                        border: 'none', position: 'relative', cursor: 'pointer', transition: 'background 0.3s', flexShrink: 0
+                                                    }}
+                                                >
+                                                    <div style={{
+                                                        width: '16px', height: '16px', background: 'white', borderRadius: '50%',
+                                                        position: 'absolute', top: '2px', left: isAdaptive ? '18px' : '2px',
+                                                        transition: 'left 0.3s ease', boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                                    }} />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {/* Submit Button */}
+                        {/* Submit Button */}
                         <motion.button
-                            whileHover={files.length > 0 ? { scale: 1.1 } : {}}
-                            whileTap={files.length > 0 ? { scale: 0.9 } : {}}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             animate={files.length > 0 && !isAnalyzing ? {
                                 boxShadow: [
                                     "0 0 0px rgba(99, 102, 241, 0)",
@@ -831,43 +1169,85 @@ export default function AnalysisSection({
                                 ]
                             } : {}}
                             transition={{ repeat: Infinity, duration: 2 }}
-                            onClick={runAnalysis}
-                            disabled={isAnalyzing || files.length === 0}
+                            onClick={() => {
+                                if (isRecording) {
+                                    toggleRecording();
+                                } else if (cuisine || dietaryConstraints.length > 0 || (spiceLevel && spiceLevel !== "Medium") || (budgetSensitivity && budgetSensitivity !== "Normal") || (targetLanguage && targetLanguage !== "English")) {
+                                    if (files.length > 0) runAnalysis(voiceText); else alert("Please upload an image first!");
+                                } else {
+                                    toggleRecording();
+                                }
+                            }}
                             style={{
                                 width: '40px',
                                 height: '40px',
                                 borderRadius: '50%',
-                                background: isAnalyzing ? 'rgba(255,255,255,0.1)' : files.length > 0 ? 'var(--primary)' : 'white',
-                                color: files.length > 0 ? 'white' : 'black',
+                                background: isAnalyzing 
+                                    ? 'rgba(255,255,255,0.1)' 
+                                    : isRecording
+                                        ? '#ef4444'
+                                        : (cuisine || dietaryConstraints.length > 0 || (spiceLevel && spiceLevel !== "Medium") || (budgetSensitivity && budgetSensitivity !== "Normal") || (targetLanguage && targetLanguage !== "English")) 
+                                            ? 'var(--primary)' 
+                                            : 'white',
+                                color: (cuisine || dietaryConstraints.length > 0 || (spiceLevel && spiceLevel !== "Medium") || (budgetSensitivity && budgetSensitivity !== "Normal") || (targetLanguage && targetLanguage !== "English") || isRecording) 
+                                    ? 'white' 
+                                    : 'black',
                                 border: 'none',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                cursor: files.length > 0 ? 'pointer' : 'not-allowed',
-                                opacity: files.length > 0 ? 1 : 0.3,
+                                cursor: 'pointer',
+                                opacity: 1,
                                 flexShrink: 0
                             }}
                         >
                             {isAnalyzing ? (
                                 <div className="animate-spin" style={{ width: '18px', height: '18px', border: '2px solid rgba(0,0,0,0.1)', borderTop: '2px solid #fff', borderRadius: '50%' }}></div>
-                            ) : (
+                            ) : isRecording ? (
+                                <Square size={16} fill="white" color="white" />
+                            ) : (cuisine || dietaryConstraints.length > 0 || (spiceLevel && spiceLevel !== "Medium") || (budgetSensitivity && budgetSensitivity !== "Normal") || (targetLanguage && targetLanguage !== "English")) ? (
                                 <ArrowUp size={20} strokeWidth={3} />
+                            ) : (
+                                <AudioLines size={20} strokeWidth={2.5} />
                             )}
                         </motion.button>
                     </div>
 
-                    {/* Disclaimer inside for cleaner look */}
-                    <div style={{
-                        fontSize: '0.6rem',
-                        opacity: 0.3,
-                        textAlign: 'center',
-                        marginTop: '0.4rem',
-                        color: 'white',
-                        letterSpacing: '0.02em'
-                    }}>
-                        Linguine AI can make mistakes. Please verify important dietary info.
-                    </div>
                 </motion.div>
+
+                {/* Mobile: Selectable Pills styled below the box natively */}
+                {isMobile && (
+                    <motion.div 
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="hide-scroll"
+                        style={{
+                            display: 'flex',
+                            gap: '0.5rem',
+                            flexWrap: 'nowrap',
+                            overflowX: 'auto',
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                            width: '100%',
+                            padding: '0 0.5rem'
+                        }}
+                    >
+                        {renderPreferencePills()}
+                    </motion.div>
+                )}
+
+                {/* Disclaimer */}
+                <div style={{
+                    fontSize: '0.6rem',
+                    opacity: 0.3,
+                    textAlign: 'center',
+                    color: 'white',
+                    letterSpacing: '0.02em',
+                    paddingBottom: '0.2rem'
+                }}>
+                    Linguine AI can make mistakes. Please verify important dietary info.
+                </div>
             </div>
 
         </motion.section >

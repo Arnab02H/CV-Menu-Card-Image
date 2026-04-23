@@ -81,7 +81,7 @@ export default function Home() {
         );
     };
 
-    const runAnalysis = async () => {
+    const runAnalysis = async (voiceQuery?: string) => {
         setIsAnalyzing(true);
         setError(null);
         track('analysis_started');
@@ -92,6 +92,9 @@ export default function Home() {
         formData.append("dietary_constraints", JSON.stringify(dietaryConstraints));
         formData.append("budget_sensitivity", budgetSensitivity);
         formData.append("target_language", targetLanguage);
+        if (voiceQuery) {
+            formData.append("voice_query", voiceQuery);
+        }
 
         try {
             const response = await fetch("http://localhost:8000/analyze-menu", {

@@ -13,23 +13,71 @@ export default function Founder({ setStep }: FounderProps) {
     const [activeTab, setActiveTab] = useState<'story' | 'vision'>('story');
 
     return (
-        <section id="founder" style={{ padding: 'clamp(8rem, 15vh, 10rem) 1.5rem 4rem 1.5rem', maxWidth: '1400px', margin: '0 auto', overflow: 'visible', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-            <div className="founder-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(320px, 45vw, 600px), 1fr))',
-                gap: 'clamp(2rem, 4vw, 4rem)',
-                alignItems: 'center',
-                width: '100%'
-            }}>
+        <section id="founder" style={{ padding: 'clamp(5rem, 6vh, 6rem) 1.5rem 2rem 1.5rem', maxWidth: '1400px', margin: '0 auto', overflow: 'visible', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+            <style jsx>{`
+                .founder-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+                    gap: clamp(2rem, 4vw, 3rem);
+                    align-items: center;
+                    width: 100%;
+                }
+                .desktop-left-column {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                }
+                .block-team { width: 100%; }
 
-                {/* Left: Text Content Side */}
+                @media (max-width: 900px) {
+                    .desktop-left-column {
+                        display: contents;
+                    }
+                    .founder-grid {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .block-h2 { 
+                        order: 1; 
+                        display: flex; 
+                        flex-direction: column; 
+                        align-items: center; 
+                        text-align: center; 
+                    }
+                    .block-team { order: 2; width: 100%; }
+                    .block-tabs {
+                        order: 3;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        text-align: center;
+                    }
+                    .founder-tabs {
+                        justify-content: center !important;
+                    }
+                    .founder-text {
+                        text-align: center !important;
+                        align-items: center !important;
+                    }
+                    .founder-chips {
+                        justify-content: center !important;
+                    }
+                    .founder-quote {
+                        text-align: center !important;
+                        padding-left: 1.2rem !important;
+                    }
+                }
+            `}</style>
+            <div className="founder-grid">
+              
+              <div className="desktop-left-column">
+                {/* 1. Top Header Block */}
                 <motion.div
                     initial={{ opacity: 0, x: -30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.8 }}
-                    className="founder-content"
-                    style={{ width: '100%' }}
+                    className="block-h2"
                 >
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
@@ -37,61 +85,22 @@ export default function Founder({ setStep }: FounderProps) {
                         transition={{ delay: 0.2 }}
                         style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', marginBottom: '1rem', lineHeight: 1.1, fontWeight: 800 }}
                     >
-                        Meet the <span className="gradient-text">Visionary</span><br />
+                        Meet the <span className="gradient-text">Team</span><br />
                         Behind the Innovation
                     </motion.h2>
+                </motion.div>
 
-                    {/* LinkedIn Badge - Enhanced Responsive */}
-                    <motion.a
-                        href="https://www.linkedin.com/in/arnab-bera-65a452229/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => track('founder_linkedin_click')}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.75rem',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '16px',
-                            background: 'var(--card-bg)',
-                            border: '1px solid var(--glass-border)',
-                            backdropFilter: 'blur(12px)',
-                            marginBottom: '1.5rem',
-                            textDecoration: 'none',
-                            cursor: 'pointer',
-                            width: 'fit-content',
-                            boxShadow: '0 2px 15px rgba(0,0,0,0.05)',
-                            maxWidth: '100%'
-                        }}
-                    >
-                        <div style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '50%',
-                            overflow: 'hidden',
-                            border: '1px solid var(--glass-border)',
-                            flexShrink: 0
-                        }}>
-                            <img src="/arnab_profile_pic.jpeg" alt="Arnab" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', minWidth: 0 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', fontWeight: 700, color: 'var(--foreground)' }}>
-                                <span style={{ whiteSpace: 'nowrap' }}>Arnab Bera</span>
-                                <Linkedin size={12} fill="#0077b5" color="#0077b5" style={{ flexShrink: 0 }} />
-                                <span style={{ fontSize: '0.75rem', color: 'var(--foreground)', opacity: 0.6, fontWeight: 500, whiteSpace: 'nowrap' }}>1.6k+ followers</span>
-                            </div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--foreground)', opacity: 0.5, fontWeight: 400 }}>
-                                Building LinguineAI • CMI Student
-                            </div>
-                        </div>
-                    </motion.a>
+                {/* 3. Bottom Tabs & Text Block */}
+                <motion.div
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="block-tabs"
+                >
 
                     {/* Interactive Tabs */}
-                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', maxWidth: '100%' }}>
+                    <div className="founder-tabs" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', maxWidth: '100%' }}>
                         <button
                             onClick={() => setActiveTab('story')}
                             style={{
@@ -143,13 +152,14 @@ export default function Founder({ setStep }: FounderProps) {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: 20 }}
                                     transition={{ duration: 0.3 }}
+                                    className="founder-text"
                                     style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)', lineHeight: 1.6, opacity: 0.9 }}
                                 >
-                                    <p>Hey, I'm <span style={{ fontWeight: 700, color: 'var(--primary)' }}>Arnab</span>, Founder of Linguine AI.</p>
-                                    <p>My journey began with a simple realization: language should never be a barrier to global cuisine. With Linguine AI, I’m using computer vision and nutrition intelligence to make menus clear, personalized, and accessible for everyone.</p>
+                                    <p>We are the <span style={{ fontWeight: 700, color: 'var(--primary)' }}>Team</span> behind Linguine AI.</p>
+                                    <p>Our journey began with a simple realization: language should never be a barrier to global cuisine. Together, we’re using computer vision and nutrition intelligence to make menus clear, personalized, and accessible for everyone.</p>
 
                                     {/* Informative Stats Chips */}
-                                    <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                                    <div className="founder-chips" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
                                         {['150+ Languages', 'CV Analysis', 'Dietary Safety'].map((stat, i) => (
                                             <motion.span
                                                 key={stat}
@@ -171,7 +181,7 @@ export default function Founder({ setStep }: FounderProps) {
                                         ))}
                                     </div>
 
-                                    <p>Join me in redefining the future of global dining, powered by AI that cares about what's on your plate.</p>
+                                    <p>Join us in redefining the future of global dining, powered by AI that cares about what's on your plate.</p>
                                 </motion.div>
                             ) : (
                                 <motion.div
@@ -180,14 +190,16 @@ export default function Founder({ setStep }: FounderProps) {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 1.05 }}
                                     transition={{ duration: 0.4 }}
+                                    className="founder-text"
                                     style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)', lineHeight: 1.6, opacity: 0.9 }}
                                 >
-                                    <p>I aim to create a companion that understands your food as deeply as you do.</p>
+                                    <p>We aim to create a companion that understands your food as deeply as you do.</p>
                                     <motion.div
                                         whileHover={{ x: 5 }}
+                                        className="founder-quote"
                                         style={{
                                             position: 'relative',
-                                            padding: '2rem',
+                                            padding: '1.2rem',
                                             paddingLeft: '2.5rem',
                                             background: 'var(--card-bg)',
                                             borderRadius: '24px',
@@ -208,7 +220,7 @@ export default function Founder({ setStep }: FounderProps) {
                                             "We aren't just translating menus; we're decoding cultural stories and ensuring every meal is a safe, informed, and delightful exploration."
                                         </p>
                                         <div style={{ marginTop: '1rem', textAlign: 'right', opacity: 0.6, fontSize: '0.9rem', fontWeight: 700 }}>
-                                            — Arnab Bera
+                                            — The LinguineAI Team
                                         </div>
                                     </motion.div>
                                 </motion.div>
@@ -230,84 +242,136 @@ export default function Founder({ setStep }: FounderProps) {
                         Start Your Journey <ArrowRight size={18} />
                     </motion.button>
                 </motion.div>
+              </div>
 
-                {/* Right: Image Side */}
+                {/* 2. Team Grid Block */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9, x: 30 }}
-                    whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="founder-image-container"
-                    style={{ position: 'relative', display: 'flex', justifyContent: 'center', width: '100%', perspective: '1000px' }}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-50px" }}
+                    variants={{
+                        visible: { transition: { staggerChildren: 0.15 } },
+                        hidden: {}
+                    }}
+                    className="block-team team-grid-container"
+                    style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '1.2rem', width: '100%', maxWidth: '850px' }}
                 >
-                    {/* Floating Badges */}
-                    <motion.div
-                        animate={{ y: [0, -12, 0], rotate: [0, 2, 0] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="founder-badge"
-                        style={{
-                            position: 'absolute',
-                            top: '8%',
-                            right: '5%',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '100px',
-                            zIndex: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            border: '1px solid var(--glass-border)',
-                            background: 'rgba(23, 23, 26, 0.8)',
-                            backdropFilter: 'blur(16px)',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
-                        }}
-                    >
-                        <ChefHat size={14} className="gradient-text" />
-                        <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.5px' }}>FOUNDER</span>
-                    </motion.div>
+                    {[
+                        { id: "Arnab", initials: "AB", name: "Arnab Bera", work: "Building Frontend and OCR", followers: "1.6k+ followers", role: "Building LinguineAI • CMI Student", link: "https://www.linkedin.com/in/arnab-bera-65a452229/", img: "/arnab_profile_pic.jpeg" },
+                        { id: "Anirban", initials: "AC", name: "Anirban Chatterjee", work: "Building OCR", followers: "500+ followers", role: "Building LinguineAI • CMI Student", link: "#", img: null },
+                        { id: "Nisith", initials: "NH", name: "Nisith Hazra", work: "Building FastAPI", followers: "500+ followers", role: "Building LinguineAI • CMI Student", link: "#", img: null },
+                        { id: "Suvodeep", initials: "SD", name: "Suvodeep Dutta", work: "Connect Backend and Frontend", followers: "500+ followers", role: "Building LinguineAI • CMI Student", link: "#", img: null }
+                    ].map((member, index) => (
+                        <motion.div
+                            key={member.id}
+                            variants={{
+                                hidden: { opacity: 0, y: 50 },
+                                visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } }
+                            }}
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '0.8rem',
+                                padding: '1.5rem 1rem',
+                                borderRadius: '20px',
+                                background: 'linear-gradient(160deg, rgba(20, 20, 24, 0.8) 0%, rgba(139, 92, 246, 0.08) 100%)',
+                                border: '1px solid rgba(139, 92, 246, 0.2)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                                backdropFilter: 'blur(12px)',
+                                textAlign: 'center',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '100%'
+                            }}
+                        >
+                            {/* 1. Large Circle Profile from Sketch */}
+                            <div style={{
+                                width: '75px',
+                                height: '75px',
+                                borderRadius: '50%',
+                                overflow: 'hidden',
+                                border: '3px solid rgba(255,255,255,0.1)',
+                                background: member.img ? 'transparent' : 'linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                fontSize: '2rem',
+                                fontWeight: 800,
+                                boxShadow: member.img ? '0 10px 30px rgba(0,0,0,0.5)' : '0 10px 30px rgba(139, 92, 246, 0.4)'
+                            }}>
+                                {member.img ? (
+                                    <img src={member.img} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    member.initials
+                                )}
+                            </div>
 
-                    <motion.div
-                        whileHover={{ rotateY: 10, rotateX: 5, scale: 1.02 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="founder-image-box"
-                        style={{
-                            width: '100%',
-                            maxWidth: '440px',
-                            height: 'clamp(380px, 45vh, 500px)',
-                            borderRadius: '32px',
-                            overflow: 'hidden',
-                            border: '1px solid var(--glass-border)',
-                            boxShadow: '0 30px 100px rgba(0,0,0,0.5)',
-                            position: 'relative',
-                            transformStyle: 'preserve-3d'
-                        }}
-                    >
-                        <img src="/arnab_profile_pic.jpeg" alt="Arnab" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%)' }}></div>
-                    </motion.div>
+                            {/* 2. Work Description from Sketch */}
+                            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--foreground)', lineHeight: 1.3, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '2.5rem', flexGrow: 1 }}>
+                                {member.work}
+                            </div>
 
-                    <motion.div
-                        animate={{ y: [0, 12, 0], rotate: [0, -2, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                        className="founder-badge"
-                        style={{
-                            position: 'absolute',
-                            bottom: '8%',
-                            left: '5%',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '100px',
-                            zIndex: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            border: '1px solid var(--glass-border)',
-                            background: 'rgba(23, 23, 26, 0.8)',
-                            backdropFilter: 'blur(16px)',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
-                        }}
-                    >
-                        <ShieldCheck size={14} color="#10b981" />
-                        <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.5px' }}>DATA SCIENTIST</span>
-                    </motion.div>
+                            {/* 3. The exact LinkedIn Badge inside the card */}
+                            <motion.a
+                                href={member.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => track(`team_member_linkedin_click_${member.id}`)}
+                                whileHover={{ scale: 1.03, boxShadow: '0 8px 25px rgba(0,0,0,0.3)' }}
+                                whileTap={{ scale: 0.98 }}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.6rem',
+                                    padding: '0.5rem 0.8rem',
+                                    borderRadius: '14px',
+                                    background: 'linear-gradient(135deg, rgba(23, 23, 26, 0.9) 0%, rgba(139, 92, 246, 0.15) 100%)', // Cool purple-tinted glass
+                                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                                    backdropFilter: 'blur(12px)',
+                                    textDecoration: 'none',
+                                    cursor: 'pointer',
+                                    width: '100%',
+                                    marginTop: 'auto', // Push to bottom
+                                    boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                                }}
+                            >
+                                <div style={{
+                                    width: '38px',
+                                    height: '38px',
+                                    borderRadius: '50%',
+                                    overflow: 'hidden',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    flexShrink: 0,
+                                    background: member.img ? 'transparent' : 'linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontSize: '1rem',
+                                    fontWeight: 800
+                                }}>
+                                    {member.img ? (
+                                        <img src={member.img} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        member.initials
+                                    )}
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minWidth: 0, alignItems: 'flex-start', textAlign: 'left', width: '100%' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', fontWeight: 800, color: 'white', flexWrap: 'wrap' }}>
+                                        <span style={{ color: 'white' }}>{member.name}</span>
+                                        <Linkedin size={12} fill="#0077b5" color="#0077b5" style={{ flexShrink: 0 }} />
+                                    </div>
+                                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500, display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+                                        <span>{member.role}</span>
+                                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>{member.followers}</span>
+                                    </div>
+                                </div>
+                            </motion.a>
+                        </motion.div>
+                    ))}
                 </motion.div>
             </div>
         </section>
