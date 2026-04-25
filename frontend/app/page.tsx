@@ -56,6 +56,8 @@ export default function Home() {
     const [error, setError] = useState<string | null>(null);
     const [budgetSensitivity, setBudgetSensitivity] = useState("Normal");
     const [targetLanguage, setTargetLanguage] = useState("English");
+    const [extractionMethod, setExtractionMethod] = useState("gemini");
+    const [rawOcrText, setRawOcrText] = useState<string | null>(null);
     const [analysisResults, setAnalysisResults] = useState<any[]>([]);
 
     useEffect(() => {
@@ -92,6 +94,7 @@ export default function Home() {
         formData.append("dietary_constraints", JSON.stringify(dietaryConstraints));
         formData.append("budget_sensitivity", budgetSensitivity);
         formData.append("target_language", targetLanguage);
+        formData.append("extraction_method", extractionMethod);
         if (voiceQuery) {
             formData.append("voice_query", voiceQuery);
         }
@@ -110,6 +113,7 @@ export default function Home() {
 
             if (data && Array.isArray(data.dishes)) {
                 setAnalysisResults(data.dishes);
+                setRawOcrText(data.raw_text || null);
                 track('analysis_success', { dishCount: data.dishes.length });
             } else {
                 setError("No dishes found or invalid format.");
@@ -174,6 +178,9 @@ export default function Home() {
                         setBudgetSensitivity={setBudgetSensitivity}
                         targetLanguage={targetLanguage}
                         setTargetLanguage={setTargetLanguage}
+                        extractionMethod={extractionMethod}
+                        setExtractionMethod={setExtractionMethod}
+                        rawOcrText={rawOcrText}
                         error={error}
                     />
                 )}

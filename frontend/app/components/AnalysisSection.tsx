@@ -21,6 +21,9 @@ interface AnalysisSectionProps {
     setBudgetSensitivity: (val: string) => void;
     targetLanguage: string;
     setTargetLanguage: (val: string) => void;
+    extractionMethod: string;
+    setExtractionMethod: (val: string) => void;
+    rawOcrText?: string | null;
     error: string | null;
 }
 
@@ -179,6 +182,9 @@ export default function AnalysisSection({
     setBudgetSensitivity,
     targetLanguage,
     setTargetLanguage,
+    extractionMethod,
+    setExtractionMethod,
+    rawOcrText,
     error
 }: AnalysisSectionProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -193,9 +199,9 @@ export default function AnalysisSection({
     const [showInputBar, setShowInputBar] = useState(true);
     const [dishImages, setDishImages] = useState<{ [key: string]: string }>({});
     const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
-    const [selectedModel, setSelectedModel] = useState("gemini-flash");
     const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
     const [isAdaptive, setIsAdaptive] = useState(false);
+    const [showRawOcr, setShowRawOcr] = useState(true);
     const [isRecording, setIsRecording] = useState(false);
     const [voiceText, setVoiceText] = useState("");
     const recognitionRef = useRef<any>(null);
@@ -629,6 +635,73 @@ export default function AnalysisSection({
                     </div>
                 )}
 
+                {/* Raw OCR Text Panel (only for EasyOCR / PaddleOCR) */}
+                {!isAnalyzing && rawOcrText && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            width: '100%',
+                            marginBottom: '1.5rem',
+                            borderRadius: '16px',
+                            border: '1px solid rgba(251, 191, 36, 0.3)',
+                            background: 'rgba(251, 191, 36, 0.04)',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {/* Header */}
+                        <button
+                            onClick={() => setShowRawOcr(v => !v)}
+                            style={{
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '0.8rem 1rem',
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                color: 'white'
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                <span style={{ fontSize: '1rem' }}>⚠️</span>
+                                <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#fbbf24' }}>Raw OCR Output</span>
+                                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>Results may be noisy — Gemini will interpret this below</span>
+                            </div>
+                            <ChevronDown size={16} style={{ color: '#fbbf24', transform: showRawOcr ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                        </button>
+
+                        {/* Collapsible Body */}
+                        <AnimatePresence>
+                            {showRawOcr && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    style={{ overflow: 'hidden' }}
+                                >
+                                    <pre style={{
+                                        margin: 0,
+                                        padding: '0 1rem 1rem 1rem',
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.6)',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
+                                        lineHeight: 1.7,
+                                        fontFamily: 'monospace',
+                                        maxHeight: '220px',
+                                        overflowY: 'auto'
+                                    }} className="hide-scroll">
+                                        {rawOcrText}
+                                    </pre>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
+
                 {/* Results Grid - Keeping it clean, no images */}
                 {!isAnalyzing && analysisResults.length > 0 && (
                     <div style={{ width: '100%', paddingBottom: '2rem' }}>
@@ -1055,7 +1128,7 @@ export default function AnalysisSection({
                                     whiteSpace: 'nowrap'
                                 }}
                             >
-                                {selectedModel === 'gemini-pro' ? 'Gemini 1.5 Pro' : selectedModel === 'sonnet' ? 'Sonnet 4.6 Adaptive' : 'Gemini 1.5 Flash'}
+                                {extractionMethod === 'gemini' ? 'Gemini Pro' : extractionMethod === 'easyocr' ? 'Easy OCR' : 'PaddleOCR'}
                                 <ChevronDown size={14} style={{ opacity: 0.5, transform: isModelDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                             </button>
 
@@ -1090,13 +1163,13 @@ export default function AnalysisSection({
                                             }}
                                         >
                                             {[
-                                                { id: 'gemini-pro', name: 'Gemini 1.5 Pro', desc: 'Most capable for ambitious work', upgrade: true },
-                                                { id: 'sonnet', name: 'Sonnet 4.6', desc: 'Most efficient for everyday tasks' },
-                                                { id: 'gemini-flash', name: 'Gemini 1.5 Flash', desc: 'Fastest for quick answers' }
+                                                { id: 'gemini', name: 'Gemini Pro', desc: 'Most capable for ambitious work', upgrade: true },
+                                                { id: 'easyocr', name: 'Easy OCR', desc: 'Fastest for quick answers' },
+                                                { id: 'paddleocr', name: 'PaddleOCR', desc: 'Best for complex layouts' }
                                             ].map((model) => (
                                                 <button
                                                     key={model.id}
-                                                    onClick={() => { setSelectedModel(model.id); setIsModelDropdownOpen(false); }}
+                                                    onClick={() => { setExtractionMethod(model.id); setIsModelDropdownOpen(false); }}
                                                     style={{
                                                         display: 'flex',
                                                         flexDirection: 'column',
@@ -1117,8 +1190,8 @@ export default function AnalysisSection({
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                                                         <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'white' }}>{model.name}</span>
                                                         {model.upgrade ? (
-                                                            <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', border: '1px solid rgba(99, 102, 241, 0.4)', color: '#818cf8', borderRadius: '100px', fontWeight: 600 }}>Upgrade</span>
-                                                        ) : selectedModel === model.id ? (
+                                                            <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', border: '1px solid rgba(99, 102, 241, 0.4)', color: '#818cf8', borderRadius: '100px', fontWeight: 600 }}>Pro</span>
+                                                        ) : extractionMethod === model.id ? (
                                                             <Check size={16} color="#3b82f6" />
                                                         ) : null}
                                                     </div>

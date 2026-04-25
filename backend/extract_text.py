@@ -15,13 +15,7 @@ if not API_KEY:
 
 client = genai.Client(api_key=API_KEY)
 
-def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List[Dict[str, Any]]:
-    try:
-        image = Image.open(io.BytesIO(image_bytes))
-    except Exception as e:
-        print(f"Error opening image: {e}")
-        return []
-
+def _get_prompt(preferences: Dict[str, Any], input_type: str = "image") -> str:
     pref_text = ""
     if preferences:
         pref_text = f"""
@@ -33,10 +27,12 @@ def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List
         - Target Language for Output: {preferences.get('target_language', 'English')}
         """
 
-    prompt = f"""
+    source_instruction = "visible on the menu image" if input_type == "image" else "in the provided raw OCR text"
+
+    return f"""
     You are an expert menu analyzer and food recommender.
     
-    STEP 1: Identify and extract EVERY SINGLE DISH/ITEM visible on the menu.
+    STEP 1: Identify and extract EVERY SINGLE DISH/ITEM {source_instruction}.
     STEP 2: Evaluate matching items based on user preferences.
     
     {pref_text}
@@ -64,28 +60,54 @@ def extract_menu(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List
     Return ONLY a valid JSON array of objects. No markdown, no intro/outro.
     """
 
+def _parse_gemini_response(text_response: str) -> List[Dict[str, Any]]:
+    # Enhanced JSON extraction
+    json_match = re.search(r'\[.*\]', text_response, re.DOTALL)
+    if json_match:
+        text_response = json_match.group(0)
+    
+    dishes = json.loads(text_response)
+    
+    # Image generation is now handled on-demand by the frontend calling /search-image
+    for dish in dishes:
+        dish['image_url'] = None
+        
+    return dishes
+
+
+def extract_menu_from_image(image_bytes: bytes, preferences: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+    try:
+        image = Image.open(io.BytesIO(image_bytes))
+    except Exception as e:
+        print(f"Error opening image: {e}")
+        return []
+
+    prompt = _get_prompt(preferences, "image")
+
     try:
         response = client.models.generate_content(
             model="gemini-flash-latest",
             contents=[prompt, image]
         )
-        
-        text_response = response.text
-        
-        # Enhanced JSON extraction
-        json_match = re.search(r'\[.*\]', text_response, re.DOTALL)
-        if json_match:
-            text_response = json_match.group(0)
-        
-        import random
-        from urllib.parse import quote
-        dishes = json.loads(text_response)
-        
-        # Image generation is now handled on-demand by the frontend calling /search-image
-        for dish in dishes:
-            dish['image_url'] = None
-            
-        return dishes
+        return _parse_gemini_response(response.text)
+
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        raise e
+
+def extract_menu_from_text(raw_text: str, preferences: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+    if not raw_text or not raw_text.strip():
+        return []
+
+    prompt = _get_prompt(preferences, "text")
+    prompt += f"\n\n--- RAW OCR TEXT ---\n{raw_text}\n--------------------"
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=[prompt]
+        )
+        return _parse_gemini_response(response.text)
 
     except Exception as e:
         print(f"Gemini API Error: {e}")

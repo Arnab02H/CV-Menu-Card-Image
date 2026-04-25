@@ -5,8 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from models import MenuAnalysisResponse, Dish
 from dotenv import load_dotenv
-from extract_text import extract_menu
+from extract_text import extract_menu_from_image, extract_menu_from_text
 from services.image_service import get_dish_image_url
+from services.ocr_service import extract_text_easyocr
+from services.paddle_service import extract_text_paddleocr
 import json
 
 # Setup logging
@@ -47,9 +49,10 @@ async def analyze_menu(
     spice_level: Optional[str] = Form("medium"),
     dietary_constraints: Optional[str] = Form("[]"),
     budget_sensitivity: Optional[str] = Form(None),
-    target_language: Optional[str] = Form("English")
+    target_language: Optional[str] = Form("English"),
+    extraction_method: Optional[str] = Form("gemini")
 ):
-    logger.info("--- New Request (Gemini Backend) ---")
+    logger.info(f"--- New Request (Extraction: {extraction_method}) ---")
     
     try:
         # Parse dietary constraints
@@ -67,17 +70,33 @@ async def analyze_menu(
         }
 
         all_dishes = []
+        all_raw_texts = []
         for img_file in images:
             image_data = await img_file.read()
-            # Call the extraction function
-            dishes_data = extract_menu(image_data, preferences)
+            raw_text = None
+            # Call the extraction function based on the method
+            if extraction_method.lower() == "easyocr":
+                logger.info("Extracting text using EasyOCR...")
+                raw_text = extract_text_easyocr(image_data)
+                dishes_data = extract_menu_from_text(raw_text, preferences)
+            elif extraction_method.lower() == "paddleocr":
+                logger.info("Extracting text using PaddleOCR...")
+                raw_text = extract_text_paddleocr(image_data)
+                dishes_data = extract_menu_from_text(raw_text, preferences)
+            else:
+                logger.info("Extracting text using Gemini Multimodal...")
+                dishes_data = extract_menu_from_image(image_data, preferences)
             
+            if raw_text:
+                all_raw_texts.append(raw_text)
+
             for d in dishes_data:
                 # Ensure all required fields are present; Pydantic will handle types
                 all_dishes.append(Dish(**d))
 
+        combined_raw_text = "\n\n--- Next Image ---\n\n".join(all_raw_texts) if all_raw_texts else None
         logger.info(f"Successfully processed menu. Found {len(all_dishes)} items.")
-        return MenuAnalysisResponse(dishes=all_dishes)
+        return MenuAnalysisResponse(dishes=all_dishes, raw_text=combined_raw_text)
 
     except Exception as e:
         err_msg = str(e)

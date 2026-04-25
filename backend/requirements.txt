@@ -6,7 +6,10 @@ pydantic-settings
 pillow
 python-dotenv
 opencv-python
-numpy
-pillow
+numpy<2
 google-genai
 duckduckgo-search
+easyocr
+paddleocr
+paddlepaddle
+langchain_text_splitters
